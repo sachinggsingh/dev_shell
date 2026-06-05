@@ -12,14 +12,164 @@ Beyond basic shell functionality, DevShell is evolving toward a lightweight obse
 
 ---
 
-## Project Structure
+## Features
+
+### Modular Command System
+
+Commands are organized into self-contained modules grouped by feature area (file operations, directory operations, system monitoring, etc.). New commands can be added by creating a module and registering it with the shell dispatcher — no changes to the core shell logic are required.
+
+### Shell Experience
+
+DevShell provides a familiar interactive shell experience with command history, line editing, and tab completion powered by `readline` on Linux and macOS. It supports a prompt-based workflow similar to traditional Unix shells.
+
+### File Operations
+
+A full set of file management commands including creating, removing, and inspecting files. All operations include input validation and produce cleanly formatted output, making it easy to work with files directly from within the shell.
+
+### Directory Browsing
+
+The `tree` command lets you visualize directory structures with options to filter by directories only, show full paths, and limit traversal depth — useful for quickly understanding project layouts.
+
+### File Permission Inspection
+
+The `perm` command displays detailed file permission flags (read, write, execute) for the owner, group, and others, giving you quick visibility into access control without leaving the shell.
+
+### Log Viewing
+
+The `logs` command prints file contents directly in the shell, providing a quick way to inspect log files or any text file without switching to another tool.
+
+### Local System Monitoring
+
+DevShell can monitor the local machine's CPU usage (overall and per-core) and memory usage in real time. This is powered by `psutil` and provides a live, updating view of system resource consumption.
+
+### Server Registration and Management
+
+You can register remote servers by name, IP, and port, then list or remove them. A default `local` server is always available. This forms the foundation for multi-server monitoring workflows.
+
+### Real-Time Metric Watching
+
+The `watch` command connects to a registered server and streams live metrics (CPU, memory) at a configurable interval. You can specify which metrics to display and how many samples to collect, making it a flexible tool for both quick checks and longer monitoring sessions.
+
+---
+
+## Commands
+
+| Command                                                       | Description                                                           |
+| ------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `pwd`                                                         | Show current working directory                                        |
+| `ls [path] [-a] [-l] [-d]`                                    | List files and folders with optional hidden/long/directory-only flags |
+| `cd <path>`                                                   | Change current directory                                              |
+| `mkdir <name> [-p]`                                           | Create directory with optional parent creation                        |
+| `rmdir <name> [-r]`                                           | Remove directory, optionally recursively                              |
+| `touch <name>`                                                | Create a file if it does not exist                                    |
+| `rm <name> [-f]`                                              | Remove a file with optional force                                     |
+| `tree [path] [-d] [-f] [-L depth]`                            | Display directory tree with filters and depth control                 |
+| `size <path>`                                                 | Show file or directory size                                           |
+| `perm <path>`                                                 | Show file permission flags                                            |
+| `logs <file>`                                                 | Print file contents                                                   |
+| `watch <server-name> [-i seconds] [-m cpu,memory] [-n count]` | Watch server metrics in real time                                     |
+| `watch-server <server-name>`                                  | Explicit server monitoring command                                    |
+| `add-server <name> <ip> <port>`                               | Register a server for monitoring                                      |
+| `remove-server <name>`                                        | Remove a registered server                                            |
+| `servers`                                                     | List all registered servers                                           |
+| `clear`                                                       | Clear the screen                                                      |
+| `help`                                                        | Display help text                                                     |
+| `exit` / `q`                                                  | Exit the shell                                                        |
+
+---
+
+## Getting Started
+
+Run the shell:
+
+```bash
+python main.py
+```
+
+### Optional Dependency
+
+```bash
+pip install psutil
+```
+
+Required for CPU and memory monitoring features.
+
+---
+
+## Watch Command — Usage Examples
+
+The `watch` command is used to monitor server metrics in real time.
+
+### Watch Local Machine
+
+Monitor the local machine with default settings:
+
+```bash
+shell> watch local
+```
+
+### Set a Custom Refresh Interval
+
+Update metrics every 3 seconds:
+
+```bash
+shell> watch local -i 3
+```
+
+### Choose Specific Metrics
+
+Monitor only CPU usage:
+
+```bash
+shell> watch local -m cpu
+```
+
+Monitor both CPU and memory:
+
+```bash
+shell> watch local -m cpu,memory
+```
+
+### Limit the Number of Samples
+
+Collect 10 metric snapshots and then stop:
+
+```bash
+shell> watch local -n 10
+```
+
+### Combine All Options
+
+Watch the `web1` server, refreshing every 5 seconds, showing CPU and memory, for 20 samples:
+
+```bash
+shell> watch web1 -i 5 -m cpu,memory -n 20
+```
+
+### Watch a Registered Remote Server
+
+After registering a server with `add-server`, you can watch it the same way:
+
+```bash
+shell> add-server web1 192.168.1.20 9000
+Server 'web1' registered at 192.168.1.20:9000
+
+shell> watch web1
+```
+
+> **Note:** Remote servers must expose a `GET /metrics` endpoint returning JSON with `cpu` and `memory` fields. Server registrations are stored in memory and will be lost when the shell exits. A `local` server at `127.0.0.1:8000` is always registered by default.
+
+---
+
+## Architecture
+
+### Project Structure
 
 ```text
 dev_shell/
 ├── main.py                 # Shell entry point
 ├── shell.py                # Core shell dispatcher and command registry
 ├── commands/               # Command modules grouped by feature
-│   ├── __init__.py
 │   ├── file_commands.py
 │   ├── directory_commands.py
 │   ├── system_commands.py
@@ -27,193 +177,42 @@ dev_shell/
 │   ├── permission_commands.py
 │   └── help_command.py
 │
-├── monitoring/             # Monitoring and server discovery (future)
+├── monitoring/             # Monitoring and server discovery
 │   ├── registry.py
 │   ├── agent.py
 │   └── heartbeat.py
 │
-└── utils/
-    ├── __init__.py
+└── utils/                  # Shared utilities
     ├── formatters.py
     ├── logger.py
     └── validators.py
 ```
 
----
+### Current Monitoring Architecture
 
-## Features
-
-* Modular command registration system
-* Built-in command help and dispatch
-* Command line editing, history, and tab completion using `readline` (Linux/macOS)
-* File operations with validation and formatted output
-* Directory tree browsing with filters
-* Local CPU and memory monitoring
-* File permission inspection via `perm`
-* Easy to extend with new command modules
-* Foundation for remote server monitoring
-* Future support for automatic service discovery
-
----
-
-## Commands
-
-| Command                                                       | Description                                                           | Status |
-| ------------------------------------------------------------- | --------------------------------------------------------------------- | ------ |
-| `pwd`                                                         | Show current working directory                                        | Done   |
-| `ls [path] [-a] [-l] [-d]`                                    | List files and folders with optional hidden/long/directory-only flags | Done   |
-| `cd <path>`                                                   | Change current directory                                              | Done   |
-| `mkdir <name> [-p]`                                           | Create directory with optional parent creation                        | Done   |
-| `rmdir <name> [-r]`                                           | Remove directory, optionally recursively                              | Done   |
-| `touch <name>`                                                | Create a file if it does not exist                                    | Done   |
-| `rm <name> [-f]`                                              | Remove a file with optional force                                     | Done   |
-| `tree [path] [-d] [-f] [-L depth]`                            | Display directory tree with filters and depth control                 | Done   |
-| `size <path>`                                                 | Show file or directory size                                           | Done   |
-| `perm <path>`                                                 | Show file permission flags                                            | Done   |
-| `logs <file>`                                                 | Print file contents                                                   | Done   |
-| `watch <server-name> [-i seconds] [-m cpu,memory] [-n count]` | Watch server metrics                                                  | Done   |
-| `watch-server <server-name>`                                  | Explicit server monitoring command                                    | Done   |
-| `add-server <name> <ip> <port>`                               | Register a server for monitoring                                      | Done   |
-| `remove-server <name>`                                        | Remove a registered server                                            | Done   |
-| `servers`                                                     | List all registered servers                                           | Done   |
-| `clear`                                                       | Clear the screen                                                      | Done   |
-| `help`                                                        | Display help text                                                     | Done   |
-| `exit` / `q`                                                  | Exit the shell                                                        | Done   |
-
----
-
-## Usage
-
-Run the shell from the `dev_shell` directory:
-
-```bash
-python main.py
-```
-
-Then type commands like:
-
-```bash
-help
-ls -l
-tree .
-perm /path/to/file
-watch local
-size README.md
-rm temp.txt
-```
-
----
-
-## Installation
-
-This project primarily uses Python standard libraries.
-
-Optional dependency:
-
-```bash
-pip install psutil
-```
-
-Used for:
-
-* CPU monitoring
-* Memory monitoring
-* Per-core CPU statistics
-
----
-
-## Monitoring Architecture
-
-### Current Implementation
-
-Currently DevShell supports monitoring the local machine.
+DevShell currently supports monitoring the local machine directly via `psutil`.
 
 ```text
 DevShell
     |
     v
-Local Machine Metrics
+Local Machine Metrics (CPU, Memory)
 ```
 
-Available metrics:
+For remote servers, DevShell makes HTTP requests to a `/metrics` endpoint exposed by the target server.
 
-* CPU Usage
-* Per-Core CPU Usage
-* Memory Usage
-
-Example:
-
-```bash
-watch local
+```text
+DevShell ──── HTTP GET /metrics ────> Remote Server
+    |
+    v
+Display Metrics in Shell
 ```
 
----
+### Planned Architecture — Agent-Based Registration
 
-## How to Add a Server
+The next evolution replaces manual server registration with self-registering monitoring agents.
 
-Use the `add-server` command to register a new server for monitoring:
-
-```bash
-add-server <name> <ip> <port>
-```
-
-### Example
-
-```bash
-shell> add-server web1 192.168.1.20 9000
-Server 'web1' registered at 192.168.1.20:9000
-
-shell> add-server db1 10.0.0.5 9000
-Server 'db1' registered at 10.0.0.5:9000
-```
-
-### List Registered Servers
-
-```bash
-shell> servers
-Name            IP                   Port
--------------------------------------------
-local           127.0.0.1            8000
-web1            192.168.1.20         9000
-db1             10.0.0.5             9000
-```
-
-### Remove a Server
-
-```bash
-shell> remove-server db1
-Server 'db1' removed.
-```
-
-### Monitor a Registered Server
-
-Once added, use `watch` or `watch-server` to start monitoring:
-
-```bash
-watch web1
-watch-server web1 -i 5 -m cpu,memory -n 10
-```
-
-The server must expose a `GET /metrics` endpoint returning JSON with `cpu` and `memory` fields:
-
-```json
-{
-    "cpu": 42.5,
-    "memory": 68.3
-}
-```
-
-> **Note:** Server registrations are stored in memory and will be lost when the shell exits. A `local` server at `127.0.0.1:8000` is always registered by default.
-
----
-
-## Planned Remote Monitoring (Agent-Based Registration)
-
-The next major feature is agent-based server monitoring.
-
-Instead of manually configuring servers, each monitored machine will run a lightweight monitoring agent.
-
-### Architecture
+Each monitored machine will run a lightweight agent that automatically registers itself with DevShell, sends periodic heartbeats, and exposes a metrics endpoint.
 
 ```text
 +-------------------+
@@ -223,106 +222,37 @@ Instead of manually configuring servers, each monitored machine will run a light
           ^
           |
       Registration
+      + Heartbeat
           |
 +---------+---------+
-| Monitoring Agent  |
+| Monitoring Agent  |  (runs on each target machine)
 +-------------------+
 ```
 
-### Registration Flow
+**Registration Flow:**
 
-1. Monitoring agent starts.
-2. Agent registers itself with DevShell.
-3. DevShell stores server information.
-4. User can monitor registered servers.
-
-Example:
-
-```bash
-register web1 192.168.1.20 9000
-
-servers
-
-watch web1
-```
-
-### Planned Registry
-
-```python
-{
-    "web1": {
-        "ip": "192.168.1.20",
-        "port": 9000,
-        "status": "online"
-    }
-}
-```
-
-### Planned Agent Endpoints
-
-```http
-POST /register
-POST /heartbeat
-GET  /metrics
-```
-
-### Planned Features
-
-* Self-registering servers
-* Heartbeat monitoring
-* Online/offline detection
-* Remote CPU monitoring
-* Remote memory monitoring
+1. Monitoring agent starts on the target machine.
+2. Agent sends a registration request to DevShell.
+3. DevShell stores the server in its registry.
+4. Agent sends periodic heartbeats to confirm availability.
+5. User monitors the server via `watch`.
 
 ---
 
-## Extending dev_shell
+## Future Scope
 
-### Add a New Command
+### Agent-Based Remote Monitoring
 
-1. Create a module under `commands/`.
+* Self-registering servers via lightweight agents
+* Heartbeat system for online/offline detection
+* Remote CPU and memory monitoring
+* Automatic server registry management
 
-Example:
+### Kubernetes Service Discovery
 
-```python
-class SearchCommands:
+In Kubernetes environments, pods are ephemeral — they are created and destroyed dynamically, and their IP addresses change constantly. Manual server registration becomes impractical at scale.
 
-    @staticmethod
-    def grep(args):
-        """Search for text in files."""
-        pass
-```
-
-2. Import and register the command in `shell.py`.
-
-```python
-from commands.search_commands import SearchCommands
-
-self.commands = {
-    "grep": SearchCommands.grep,
-}
-```
-
-3. Add help text to `commands/help_command.py`.
-
----
-
-## Future Scope: Kubernetes Service Discovery
-
-After agent-based monitoring is implemented, DevShell will support Kubernetes-native service discovery.
-
-### Why?
-
-In Kubernetes environments:
-
-* Pods are created dynamically.
-* Pods can be terminated at any time.
-* IP addresses change frequently.
-* Manual registration becomes impractical.
-
-Instead of registering servers manually, DevShell will automatically discover workloads using the Kubernetes API.
-
-### Proposed Architecture
+DevShell will integrate with the Kubernetes API to automatically discover running workloads and register them as monitoring targets.
 
 ```text
 Kubernetes Cluster
@@ -338,93 +268,26 @@ DevShell Discovery Engine
         +---- Pod C
 ```
 
-### Discovery Workflow
+**Planned capabilities:**
 
-```text
-Kubernetes API
-      |
-      v
-Discover Pods
-      |
-      v
-Auto Register Targets
-      |
-      v
-Watch Metrics
-```
+* Automatic discovery of pods, deployments, and services
+* Dynamic target registration as workloads scale up or down
+* Kubernetes-native monitoring without manual configuration
+* Foundation for a broader observability platform
 
-### Planned Commands
-
-```bash
-discover k8s
-
-pods
-
-services
-
-watch pod/frontend
-
-watch deployment/api
-
-watch service/payment
-```
-
-### Example Implementation
-
-```python
-pods = k8s.list_namespaced_pod("default")
-
-for pod in pods.items:
-
-    registry.register(
-        pod.metadata.name,
-        pod.status.pod_ip
-    )
-```
-
-### Benefits
-
-* Automatic target discovery
-* No manual registration
-* Kubernetes-native monitoring
-* Dynamic infrastructure support
-* Foundation for observability tooling
-
----
-
-## Notes
-
-* `watch local` currently supports local monitoring.
-* Agent-based remote monitoring is under development.
-* Kubernetes service discovery is planned for future releases.
-* The `utils/` package provides reusable formatting, logging, and validation helpers.
-
----
-
-## Next Improvements
-
-### Monitoring
-
-* Agent-based remote monitoring
-* Server registry
-* Heartbeat system
-* Online/offline detection
-* Metrics aggregation
-
-### Shell Features
+### Shell Enhancements
 
 * Command aliases
-* Configuration support
-* Improved command completion
+* Configuration file support
+* Improved tab completion
 * Better output formatting
 
 ### Observability
 
-* Dashboard command
-* Stats command
-* Alerting support
-* Log aggregation
-* Kubernetes service discovery
+* Dashboard command for a consolidated metrics overview
+* Stats command for aggregated metric summaries
+* Alerting support for threshold-based notifications
+* Log aggregation across monitored servers
 
 ---
 
