@@ -7,7 +7,14 @@ from commands.system_commands import SystemCommands
 from commands.log_commands import LogCommands
 from commands.help_command import HelpCommand
 from commands.permission_commands import Permissions
+from commands.watch_command import WatchServerCommand
+from commands.server_commands import ServerCommands
 from utils import Formatter, Logger, Validator
+
+try:
+    import readline
+except ImportError:
+    readline = None
 
 
 class Shell:
@@ -18,6 +25,12 @@ class Shell:
         self.running = True
         self.logger = Logger(log_file=os.path.join(os.path.dirname(__file__), "shell.log"))
         self.validator = Validator()
+        self.server_registry = {
+            "local": {"ip": "127.0.0.1", "port": 8000}
+        }
+        self.server_watcher = WatchServerCommand(self.server_registry)
+        self.server_cmds = ServerCommands(self.server_registry)
+
         self.commands = {
             "pwd": DirectoryCommands.pwd,
             "ls": FileCommands.ls,
@@ -30,14 +43,50 @@ class Shell:
             "cat": FileCommands.cat,
             "tree": DirectoryCommands.tree,
             "logs": LogCommands.logs,
-            "watch": SystemCommands.watch,
+            "watch": self.server_watcher.execute,
+            "watch-server": self.server_watcher.execute,
             "perm": Permissions.execute,
+            "add-server": self.server_cmds.add_server,
+            "remove-server": self.server_cmds.remove_server,
+            "servers": self.server_cmds.list_servers,
             "size": FileCommands.file_size,
             "help": HelpCommand.help,
             "exit": self._handle_exit,
             "q": self._handle_exit,
         }
+        self.history_file = os.path.expanduser("~/.dev_shell_history")
+        self._configure_readline()
         self.logger.info("Shell initialized")
+
+    def _configure_readline(self):
+        """Configure readline for command history and tab completion."""
+        if not readline:
+            return
+
+        readline.parse_and_bind("tab: complete")
+        readline.set_completer(self._complete_command)
+        try:
+            if os.path.exists(self.history_file):
+                readline.read_history_file(self.history_file)
+        except Exception:
+            pass
+
+    def _complete_command(self, text, state):
+        """Tab completion for available shell commands."""
+        options = [cmd for cmd in self.commands if cmd.startswith(text)]
+        if state < len(options):
+            return options[state]
+        return None
+
+    def _save_history(self):
+        """Save command history to the history file."""
+        if not readline:
+            return
+
+        try:
+            readline.write_history_file(self.history_file)
+        except Exception:
+            pass
 
     def _handle_exit(self, args):
         """Handle exit command by setting running flag."""
@@ -45,6 +94,7 @@ class Shell:
 
     def cleanup(self):
         """Perform cleanup operations before exiting."""
+        self._save_history()
         print("\nCleaning up resources...")
         print("Goodbye!")
 

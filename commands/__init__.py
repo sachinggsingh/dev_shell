@@ -5,6 +5,7 @@ from .system_commands import SystemCommands
 from .log_commands import LogCommands
 from .help_command import HelpCommand
 from .permission_commands import Permissions
+from .server_commands import ServerCommands
 
 __all__ = [
     "FileCommands",
@@ -12,5 +13,6 @@ __all__ = [
     "SystemCommands",
     "LogCommands",
     "HelpCommand",
-    "Permissions"
+    "Permissions",
+    "ServerCommands",
 ]
