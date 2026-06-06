@@ -36,6 +36,7 @@ class Shell:
             "ls": FileCommands.ls,
             "mkdir": DirectoryCommands.mkdir,
             "rmdir": DirectoryCommands.rmdir,
+            "find":FileCommands.find,
             "touch": FileCommands.touch,
             "rm": FileCommands.rm,
             "cd": DirectoryCommands.cd,

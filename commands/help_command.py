@@ -6,9 +6,10 @@ class HelpCommand:
 
     HELP_TEXT = {
         "pwd": "Show current directory",
-        "ls": "List files/folders [path] [-a] [-l] [-d]",
+        "ls": "List files/folders [path] [-a] [-l] [-h] [-d]",
         "mkdir": "Create folder       <name> [-p]",
         "rmdir": "Remove folder       <name> [-r]",
+        "find": "Find files or directories <name> [-f] [-d] [-l]",
         "touch": "Create/update file  <name>",
         "cd": "Change directory    <path>",
         "cat": "Show the file content <name>",

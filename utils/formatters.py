@@ -86,6 +86,34 @@ class Formatter:
         return "\n".join(output)
 
     @staticmethod
+    def format_item_details(item_type, path):
+        """Format detailed information about a file or directory.
+        
+        Args:
+            item_type: Type of the item (e.g., 'FILE' or 'DIR')
+            path: Path to the item
+            
+        Returns:
+            str: Formatted details
+        """
+        try:
+            lines = [
+                "\n" + "=" * 50,
+                f"Path : {path}",
+                f"Type : {item_type}"
+            ]
+            
+            if os.path.isfile(path):
+                size = os.path.getsize(path)
+                lines.append(f"Size : {Formatter.format_file_size(size)}")
+            else:
+                lines.append("Size : N/A")
+                
+            return "\n".join(lines)
+        except OSError as e:
+            return f"Error reading {path}: {e}"
+
+    @staticmethod
     def highlight_error(message):
         """Format error message with highlighting.
         
@@ -95,7 +123,7 @@ class Formatter:
         Returns:
             str: Formatted error message
         """
-        return f"❌ ERROR: {message}"
+        return f" ERROR: {message}"
 
     @staticmethod
     def highlight_success(message):
@@ -107,7 +135,7 @@ class Formatter:
         Returns:
             str: Formatted success message
         """
-        return f"✅ SUCCESS: {message}"
+        return f" SUCCESS: {message}"
 
     @staticmethod
     def highlight_warning(message):
@@ -119,4 +147,4 @@ class Formatter:
         Returns:
             str: Formatted warning message
         """
-        return f"⚠️  WARNING: {message}"
+        return f" WARNING: {message}"

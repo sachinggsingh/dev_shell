@@ -39,9 +39,13 @@ class FileCommands:
     def ls(args):
         """List files and folders in a directory.
         
-        Usage: ls [path] [-a] [-l] [-d]
+        Usage: ls [path] [-a] [-l] [-h] [-d]
         """
-        flags = [arg for arg in args if arg.startswith("-")]
+        flag_chars = set()
+        for arg in args:
+            if arg.startswith("-"):
+                flag_chars.update(arg[1:])
+                
         paths = [arg for arg in args if not arg.startswith("-")]
         path = paths[0] if paths else "."
 
@@ -49,9 +53,14 @@ class FileCommands:
             print(Formatter.highlight_error(f"ls: no such directory: {path}"))
             return
 
-        include_hidden = "-a" in flags
-        directories_only = "-d" in flags
-        long_format = "-l" in flags
+        include_hidden = "a" in flag_chars
+        directories_only = "d" in flag_chars
+        long_format = "l" in flag_chars
+        human_readable = "h" in flag_chars
+
+        if human_readable and not long_format:
+            print(Formatter.highlight_error("ls: -h flag requires -l flag"))
+            return
 
         try:
             entries = sorted(os.listdir(path))
@@ -64,9 +73,20 @@ class FileCommands:
             if long_format:
                 for entry in entries:
                     entry_path = os.path.join(path, entry)
-                    entry_type = "<DIR>" if os.path.isdir(entry_path) else "<FILE>"
+                    
+                    readable = "Yes" if os.access(entry_path, os.R_OK) else "No"
+                    writable = "Yes" if os.access(entry_path, os.W_OK) else "No"
+                    executable = "Yes" if os.access(entry_path, os.X_OK) else "No"
+                    perms = f"Readable: {readable:<3} Writable: {writable:<3} Executable: {executable:<3}"
+                    
                     size = os.path.getsize(entry_path) if os.path.isfile(entry_path) else 0
-                    print(f"{entry_type:6} {Formatter.format_file_size(size):>10}  {entry}")
+                    
+                    if human_readable:
+                        size_str = Formatter.format_file_size(size)
+                    else:
+                        size_str = str(size)
+                        
+                    print(f"[{perms}] {size_str:>10}  {entry}")
             else:
                 for entry in entries:
                     print(entry)
@@ -144,3 +164,140 @@ class FileCommands:
             print(f"{path}: {Formatter.format_file_size(size)}")
         except Exception as e:
             print(Formatter.highlight_error(f"Error reading size: {e}"))
+
+    @staticmethod
+    def find(args):
+        """
+        Search for files and directories recursively.
+
+        Usage:
+            find <name>
+            find <name> -f
+            find <name> -d
+            find <name> -l
+
+        Examples:
+            find shell
+            find shell -f
+            find shell -d
+            find shell -l
+            find shell -f -l
+        """
+
+        if not args:
+            print(
+                "Usage: find <name> "
+                "[-f] [-d] [-l]"
+            )
+            return
+
+        files_only = "-f" in args
+        dirs_only = "-d" in args
+        long_format = "-l" in args
+
+        search_term = next(
+            (
+                arg
+                for arg in args
+                if not arg.startswith("-")
+            ),
+            None
+        )
+
+        if not search_term:
+            print("Search term required.")
+            return
+
+        search_term = search_term.lower()
+
+        IGNORE_DIRS = {
+            ".venv",
+            "venv",
+            "__pycache__",
+            ".git",
+            "node_modules",
+            ".idea",
+            ".vscode"
+        }
+
+        matches = []
+
+        for root, dirs, files in os.walk("."):
+
+            dirs[:] = [
+                d
+                for d in dirs
+                if d not in IGNORE_DIRS
+            ]
+
+            # Search directories
+            if not files_only:
+
+                for directory in dirs:
+
+                    if (
+                        search_term
+                        in directory.lower()
+                    ):
+
+                        matches.append(
+                            (
+                                "DIR",
+                                os.path.join(
+                                    root,
+                                    directory
+                                )
+                            )
+                        )
+
+            # Search files
+            if not dirs_only:
+
+                for file in files:
+
+                    if (
+                        search_term
+                        in file.lower()
+                    ):
+
+                        matches.append(
+                            (
+                                "FILE",
+                                os.path.join(
+                                    root,
+                                    file
+                                )
+                            )
+                        )
+
+        if not matches:
+
+            print(
+                f"No matches found for "
+                f"'{search_term}'"
+            )
+
+            return
+
+        print(
+            f"\nFound "
+            f"{len(matches)} "
+            f"match(es):\n"
+        )
+
+        for item_type, path in matches:
+
+            if long_format:
+
+                print(
+                    Formatter.format_item_details(
+                        item_type,
+                        path
+                    )
+                )
+
+            else:
+
+                print(
+                    f"[{item_type}] {path}"
+                )

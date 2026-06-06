@@ -24,7 +24,7 @@ DevShell provides a familiar interactive shell experience with command history, 
 
 ### File Operations
 
-A full set of file management commands including creating, removing, and inspecting files. All operations include input validation and produce cleanly formatted output, making it easy to work with files directly from within the shell.
+A full set of file management commands including creating, removing, finding, and inspecting files. All operations include input validation and produce cleanly formatted output, making it easy to work with files directly from within the shell.
 
 ### Directory Browsing
 
@@ -57,12 +57,13 @@ The `watch` command connects to a registered server and streams live metrics (CP
 | Command                                                       | Description                                                           |
 | ------------------------------------------------------------- | --------------------------------------------------------------------- |
 | `pwd`                                                         | Show current working directory                                        |
-| `ls [path] [-a] [-l] [-d]`                                    | List files and folders with optional hidden/long/directory-only flags |
+| `ls [path] [-a] [-l] [-h] [-d]`                               | List files and folders with optional hidden/long/human-readable/dir flags |
 | `cd <path>`                                                   | Change current directory                                              |
 | `mkdir <name> [-p]`                                           | Create directory with optional parent creation                        |
 | `rmdir <name> [-r]`                                           | Remove directory, optionally recursively                              |
 | `touch <name>`                                                | Create a file if it does not exist                                    |
 | `rm <name> [-f]`                                              | Remove a file with optional force                                     |
+| `find <name> [-f] [-d] [-l]`                                  | Find files or directories recursively                                 |
 | `tree [path] [-d] [-f] [-L depth]`                            | Display directory tree with filters and depth control                 |
 | `size <path>`                                                 | Show file or directory size                                           |
 | `perm <path>`                                                 | Show file permission flags                                            |
