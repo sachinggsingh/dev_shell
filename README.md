@@ -240,6 +240,57 @@ Each monitored machine will run a lightweight agent that automatically registers
 
 ---
 
+## Working on Commands
+
+The following command categories are currently in development or planned for future releases:
+
+### File Management
+* Advanced file operations
+* Batch file operations
+* File search and filtering
+
+### File Editing
+* In-shell text editor integration
+* Quick file editing commands
+
+### System Information
+* Detailed system information display
+* Hardware specifications
+* OS and environment details
+
+### Process Management
+* Process listing and monitoring
+* Process control commands
+* Resource usage per process
+
+### Networking
+* Network status commands
+* Connection monitoring
+* DNS resolution tools
+* Network diagnostics
+
+### Git Commands
+* Git integration within the shell
+* Repository status and operations
+* Commit and branch management
+
+### Docker Commands
+* Docker container management
+* Image operations
+* Container monitoring and logs
+
+### Kubernetes Commands
+* Kubernetes cluster interaction
+* Pod and deployment management
+* Resource monitoring
+
+### Server Monitoring
+* Enhanced server health checks
+* Performance metrics aggregation
+* Multi-server dashboards
+
+---
+
 ## Future Scope
 
 ### Agent-Based Remote Monitoring
