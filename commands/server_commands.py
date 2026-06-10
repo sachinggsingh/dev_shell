@@ -9,10 +9,10 @@ class ServerCommands:
 
     @staticmethod
     def _print_add_usage():
-        print("Usage: add-server <name> <ip> <port>")
-        print("  Registers a new server for monitoring.")
+        print("Usage: add-server <name> <job>")
+        print("  Registers a new server for monitoring via Prometheus.")
         print("Example:")
-        print("  add-server web1 192.168.1.20 9000")
+        print("  add-server backend backend-api")
 
     @staticmethod
     def _print_remove_usage():
@@ -24,33 +24,25 @@ class ServerCommands:
     def add_server(self, args):
         """Register a new server in the registry.
 
-        Usage: add-server <name> <ip> <port>
+        Usage: add-server <name> <job>
         """
         if not args or "-h" in args or "--help" in args:
             self._print_add_usage()
             return
 
-        if len(args) < 3:
+        if len(args) < 2:
             print("Error: Missing arguments.")
             self._print_add_usage()
             return
 
-        name, ip, port_str = args[0], args[1], args[2]
-
-        try:
-            port = int(port_str)
-            if port < 1 or port > 65535:
-                raise ValueError
-        except ValueError:
-            print("Error: Port must be an integer between 1 and 65535.")
-            return
+        name, job = args[0], args[1]
 
         if name in self.registry:
             print(f"Server '{name}' already exists. Remove it first or use a different name.")
             return
 
-        self.registry[name] = {"ip": ip, "port": port}
-        print(f"Server '{name}' registered at {ip}:{port}")
+        self.registry[name] = {"job": job}
+        print(f"Server '{name}' registered with job '{job}'")
 
     def remove_server(self, args):
         """Remove a server from the registry.
@@ -79,8 +71,8 @@ class ServerCommands:
             print("No servers registered.")
             return
 
-        print(f"\n{'Name':<15} {'IP':<20} {'Port':<8}")
-        print("-" * 43)
+        print(f"\n{'Name':<15} {'Job':<20}")
+        print("-" * 36)
         for name, info in self.registry.items():
-            print(f"{name:<15} {info['ip']:<20} {info['port']:<8}")
+            print(f"{name:<15} {info.get('job', 'N/A'):<20}")
         print()

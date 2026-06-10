@@ -26,7 +26,7 @@ class Shell:
         self.logger = Logger(log_file=os.path.join(os.path.dirname(__file__), "shell.log"))
         self.validator = Validator()
         self.server_registry = {
-            "local": {"ip": "127.0.0.1", "port": 8000}
+            "local": {"job": "devshell-local"}
         }
         self.server_watcher = WatchServerCommand(self.server_registry)
         self.server_cmds = ServerCommands(self.server_registry)
