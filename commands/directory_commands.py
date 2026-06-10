@@ -7,7 +7,7 @@ _VALIDATOR = Validator()
 
 
 class DirectoryCommands:
-    """Handles directory-related shell commands."""
+    """Handles directory-related dev_shell commands."""
 
     @staticmethod
     def pwd(args):

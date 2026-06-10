@@ -1,10 +1,10 @@
-"""Logging utilities for the shell."""
+"""Logging utilities for the dev_shell."""
 import os
 from datetime import datetime
 
 
 class Logger:
-    """Simple logging utility for shell operations."""
+    """Simple logging utility for dev_shell operations."""
 
     def __init__(self, log_file=None):
         """Initialize logger with optional log file.

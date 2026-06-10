@@ -122,13 +122,13 @@ class Shell:
 
     def run(self):
         """Main shell loop."""
-        print("Mini Shell Started")
+        print("dev_shell Started")
         print("Type 'help' to see available commands.\n")
-        self.logger.info("Shell started")
+        self.logger.info("dev_shell started")
 
         try:
             while self.running:
-                command = input("shell> ").strip()
+                command = input("dev_shell> ").strip()
 
                 if not command:
                     continue
@@ -164,4 +164,4 @@ class Shell:
 
         finally:
             self.cleanup()
-            self.logger.info("Shell stopped")
+            self.logger.info("dev_shell stopped")

@@ -1,4 +1,4 @@
-"""Entry point for the mini shell application."""
+"""Entry point for the dev_shell application."""
 from shell import Shell
 
 
