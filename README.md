@@ -176,18 +176,28 @@ dev_shell> watch web1
 dev_shell/
 ├── main.py                 # Shell entry point
 ├── shell.py                # Core shell dispatcher and command registry
+├── requirements.txt        # Python dependencies
 ├── commands/               # Command modules grouped by feature
-│   ├── file_commands.py
 │   ├── directory_commands.py
-│   ├── system_commands.py
+│   ├── file_commands.py
+│   ├── help_command.py
 │   ├── log_commands.py
+│   ├── network_commands.py
 │   ├── permission_commands.py
-│   └── help_command.py
+│   ├── server_commands.py
+│   ├── system_commands.py
+│   ├── tree_command.py
+│   └── watch_command.py
 │
-├── monitoring/             # Monitoring and server discovery
-│   ├── registry.py
-│   ├── agent.py
-│   └── heartbeat.py
+├── config/                 # Configuration files
+│   └── prometheus.json
+│
+├── monitoring/             # Monitoring and observability clients
+│   ├── prometheus_client.py
+│   └── queries.py
+│
+├── tests/                  # Unit tests
+│   └── test_network_commands.py
 │
 └── utils/                  # Shared utilities
     ├── formatters.py
