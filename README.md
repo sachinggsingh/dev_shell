@@ -8,7 +8,7 @@ A custom developer shell built in Python for file and system operations, designe
 
 It is built for developers who want an extensible local shell experience with custom commands like `watch`, `perm`, `tree`, and more.
 
-Beyond basic shell functionality, DevShell is evolving toward a lightweight observability and monitoring platform capable of monitoring local systems, remote servers, and eventually Kubernetes workloads.
+Beyond basic shell functionality, dev_shell is evolving toward a lightweight observability and monitoring platform capable of monitoring local systems, remote servers, and eventually Kubernetes workloads.
 
 ---
 
@@ -20,7 +20,7 @@ Commands are organized into self-contained modules grouped by feature area (file
 
 ### Shell Experience
 
-DevShell provides a familiar interactive shell experience with command history, line editing, and tab completion powered by `readline` on Linux and macOS. It supports a prompt-based workflow similar to traditional Unix shells.
+dev_shell provides a familiar interactive shell experience with command history, line editing, and tab completion powered by `readline` on Linux and macOS. It supports a prompt-based workflow similar to traditional Unix shells.
 
 ### File Operations
 
@@ -40,7 +40,7 @@ The `logs` command prints file contents directly in the shell, providing a quick
 
 ### Local System Monitoring
 
-DevShell can monitor the local machine's CPU usage (overall and per-core) and memory usage in real time. This is powered by `psutil` and provides a live, updating view of system resource consumption.
+dev_shell can monitor the local machine's CPU usage (overall and per-core) and memory usage in real time. This is powered by `psutil` and provides a live, updating view of system resource consumption.
 
 ### Server Registration and Management
 
@@ -73,6 +73,12 @@ The `watch` command connects to a registered server and streams live metrics (CP
 | `add-server <name> <ip> <port>`                               | Register a server for monitoring                                      |
 | `remove-server <name>`                                        | Remove a registered server                                            |
 | `servers`                                                     | List all registered servers                                           |
+| `ping <host>`                                                 | Send ICMP ECHO_REQUEST to network hosts                               |
+| `dns <hostname>`                                              | Resolve a hostname to an IP address                                   |
+| `ip [options] [target]`                                       | Show IP addresses for a host (IPv4/IPv6)                              |
+| `curl <url> [-X method] [-H header] [-d data]`                | Make HTTP requests to a URL                                           |
+| `traceroute <hostname> [-d]`                                  | Print the route packets trace to network host                         |
+| `nslookup <hostname>`                                         | Query Internet name servers interactively                             |
 | `clear`                                                       | Clear the screen                                                      |
 | `help`                                                        | Display help text                                                     |
 | `exit` / `q`                                                  | Exit the shell                                                        |
@@ -106,7 +112,7 @@ The `watch` command is used to monitor server metrics in real time.
 Monitor the local machine with default settings:
 
 ```bash
-shell> watch local
+dev_shell> watch local
 ```
 
 ### Set a Custom Refresh Interval
@@ -114,7 +120,7 @@ shell> watch local
 Update metrics every 3 seconds:
 
 ```bash
-shell> watch local -i 3
+dev_shell> watch local -i 3
 ```
 
 ### Choose Specific Metrics
@@ -122,13 +128,13 @@ shell> watch local -i 3
 Monitor only CPU usage:
 
 ```bash
-shell> watch local -m cpu
+dev_shell> watch local -m cpu
 ```
 
 Monitor both CPU and memory:
 
 ```bash
-shell> watch local -m cpu,memory
+dev_shell> watch local -m cpu,memory
 ```
 
 ### Limit the Number of Samples
@@ -136,7 +142,7 @@ shell> watch local -m cpu,memory
 Collect 10 metric snapshots and then stop:
 
 ```bash
-shell> watch local -n 10
+dev_shell> watch local -n 10
 ```
 
 ### Combine All Options
@@ -144,7 +150,7 @@ shell> watch local -n 10
 Watch the `web1` server, refreshing every 5 seconds, showing CPU and memory, for 20 samples:
 
 ```bash
-shell> watch web1 -i 5 -m cpu,memory -n 20
+dev_shell> watch web1 -i 5 -m cpu,memory -n 20
 ```
 
 ### Watch a Registered Remote Server
@@ -152,13 +158,13 @@ shell> watch web1 -i 5 -m cpu,memory -n 20
 After registering a server with `add-server`, you can watch it the same way:
 
 ```bash
-shell> add-server web1 192.168.1.20 9000
+dev_shell> add-server web1 192.168.1.20 9000
 Server 'web1' registered at 192.168.1.20:9000
 
-shell> watch web1
+dev_shell> watch web1
 ```
 
-> **Note:** Remote servers must expose a `GET /metrics` endpoint returning JSON with `cpu` and `memory` fields. Server registrations are stored in memory and will be lost when the shell exits. A `local` server at `127.0.0.1:8000` is always registered by default.
+> **Note:** Remote servers must expose a `GET /metrics` endpoint returning JSON with `cpu` and `memory` fields. Server registrations are stored in memory and will be lost when the `dev_shell` exits. A `local` server at `127.0.0.1:8000` is always registered by default.
 
 ---
 
@@ -191,19 +197,19 @@ dev_shell/
 
 ### Current Monitoring Architecture
 
-DevShell currently supports monitoring the local machine directly via `psutil`.
+dev_shell currently supports monitoring the local machine directly via `psutil`.
 
 ```text
-DevShell
+dev_shell
     |
     v
 Local Machine Metrics (CPU, Memory)
 ```
 
-For remote servers, DevShell makes HTTP requests to a `/metrics` endpoint exposed by the target server.
+For remote servers, `dev_shell` makes HTTP requests to a `/metrics` endpoint exposed by the target server.
 
 ```text
-DevShell ──── HTTP GET /metrics ────> Remote Server
+dev_shell ──── HTTP GET /metrics ────> Remote Server
     |
     v
 Display Metrics in Shell
@@ -213,11 +219,11 @@ Display Metrics in Shell
 
 The next evolution replaces manual server registration with self-registering monitoring agents.
 
-Each monitored machine will run a lightweight agent that automatically registers itself with DevShell, sends periodic heartbeats, and exposes a metrics endpoint.
+Each monitored machine will run a lightweight agent that automatically registers itself with `dev_shell`, sends periodic heartbeats, and exposes a metrics endpoint.
 
 ```text
 +-------------------+
-|     DevShell      |
+|     dev_shell      |
 | Monitoring Server |
 +---------+---------+
           ^
@@ -233,8 +239,8 @@ Each monitored machine will run a lightweight agent that automatically registers
 **Registration Flow:**
 
 1. Monitoring agent starts on the target machine.
-2. Agent sends a registration request to DevShell.
-3. DevShell stores the server in its registry.
+2. Agent sends a registration request to `dev_shell`.
+3. `dev_shell` stores the server in its registry.
 4. Agent sends periodic heartbeats to confirm availability.
 5. User monitors the server via `watch`.
 
@@ -250,7 +256,7 @@ The following command categories are currently in development or planned for fut
 * File search and filtering
 
 ### File Editing
-* In-shell text editor integration
+* In-dev_shell text editor integration
 * Quick file editing commands
 
 ### System Information
@@ -304,7 +310,7 @@ The following command categories are currently in development or planned for fut
 
 In Kubernetes environments, pods are ephemeral — they are created and destroyed dynamically, and their IP addresses change constantly. Manual server registration becomes impractical at scale.
 
-DevShell will integrate with the Kubernetes API to automatically discover running workloads and register them as monitoring targets.
+`dev_shell` will integrate with the Kubernetes API to automatically discover running workloads and register them as monitoring targets.
 
 ```text
 Kubernetes Cluster
@@ -313,7 +319,7 @@ Kubernetes Cluster
 Kubernetes API Server
         |
         v
-DevShell Discovery Engine
+dev_shell Discovery Engine
         |
         +---- Pod A
         +---- Pod B
@@ -327,15 +333,23 @@ DevShell Discovery Engine
 * Kubernetes-native monitoring without manual configuration
 * Foundation for a broader observability platform
 
-### Shell Enhancements
+### dev_shell Enhancements
 
 * Command aliases
 * Configuration file support
 * Improved tab completion
 * Better output formatting
 
-### Observability
+### Observability with Prometheus
 
+`dev_shell` now natively integrates with Prometheus to provide advanced real-time observability for registered servers.
+
+**Prometheus Integration Features:**
+* **Prometheus Client**: Connects to a Prometheus instance (defaulting to `localhost:9090`, configurable via `config/prometheus.json`).
+* **Rich Metrics**: The `watch` and `watch-server` commands have been upgraded to execute PromQL queries and render a live dashboard directly in the terminal.
+* **Tracked Telemetry**: `dev_shell` tracks CPU usage, memory consumption, requests per second, error rate, and P95 latency for each server based on its associated Prometheus `job`.
+
+**Future Observability Goals:**
 * Dashboard command for a consolidated metrics overview
 * Stats command for aggregated metric summaries
 * Alerting support for threshold-based notifications
@@ -345,4 +359,4 @@ DevShell Discovery Engine
 
 ## Goals
 
-The long-term goal of DevShell is to evolve from a custom developer shell into a lightweight observability and monitoring platform while remaining easy to understand, extend, and experiment with.
+The long-term goal of `dev_shell` is to evolve from a custom developer shell into a lightweight observability and monitoring platform while remaining easy to understand, extend, and experiment with.

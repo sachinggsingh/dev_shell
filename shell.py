@@ -9,6 +9,7 @@ from commands.help_command import HelpCommand
 from commands.permission_commands import Permissions
 from commands.watch_command import WatchServerCommand
 from commands.server_commands import ServerCommands
+from commands.network_commands import NetWorkcommands
 from utils import Formatter, Logger, Validator
 
 try:
@@ -20,7 +21,7 @@ except ImportError:
 class Shell:
     """Main shell implementation with command dispatcher."""
 
-    def __init__(self):
+    def __init__(self, network_commands=None):
         """Initialize the shell with all available commands."""
         self.running = True
         self.logger = Logger(log_file=os.path.join(os.path.dirname(__file__), "shell.log"))
@@ -30,6 +31,7 @@ class Shell:
         }
         self.server_watcher = WatchServerCommand(self.server_registry)
         self.server_cmds = ServerCommands(self.server_registry)
+        self.network_commands = network_commands or NetWorkcommands()
 
         self.commands = {
             "pwd": DirectoryCommands.pwd,
@@ -52,6 +54,13 @@ class Shell:
             "servers": self.server_cmds.list_servers,
             "size": FileCommands.file_size,
             "help": HelpCommand.help,
+            "ping": self.network_commands.ping,
+            "dns": self.network_commands.dns,
+            "ip": self.network_commands.ip,
+            "curl": self.network_commands.curl,
+            # "netstat": self.network_commands.netstat,
+            "traceroute": self.network_commands.traceroute,
+            "nslookup": self.network_commands.nslookup,
             "exit": self._handle_exit,
             "q": self._handle_exit,
         }

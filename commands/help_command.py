@@ -5,28 +5,43 @@ class HelpCommand:
     """Handles the help command."""
 
     HELP_TEXT = {
-        "pwd": "Show current directory",
-        "ls": "List files/folders [path] [-a] [-l] [-h] [-d]",
-        "mkdir": "Create folder       <name> [-p]",
-        "rmdir": "Remove folder       <name> [-r]",
-        "find": "Find files or directories <name> [-f] [-d] [-l]",
-        "touch": "Create/update file  <name>",
-        "cd": "Change directory    <path>",
-        "cat": "Show the file content <name>",
-        "size": "Show file size <path>",
-        "rm": "Remove file <name> [-f]",
-        "perm": "Show file permissions for a path",
-        "tree": "Show directory tree [path]",
-        "clear": "Clear screen",
-        "watch": "Watch a registered server: watch <server-name> [-i seconds] [-m cpu,memory] [-n count]",
-        "watch-server": "Watch a registered server: watch-server <server-name> [-i seconds] [-m cpu,memory] [-n count]",
-        "add-server": "Register a server: add-server <name> <ip> <port>",
-        "remove-server": "Remove a server: remove-server <name>",
-        "servers": "List all registered servers",
-        "logs": "Watch the logs of a file <name>",
-        "help": "Show this help",
-        "exit": "Exit shell",
-        "q": "Exit shell (alias)",
+        "File & Directory Commands": {
+            "pwd": "Show current directory",
+            "ls": "List files/folders [path] [-a] [-l] [-h] [-d]",
+            "mkdir": "Create folder       <name> [-p]",
+            "rmdir": "Remove folder       <name> [-r]",
+            "find": "Find files or directories <name> [-f] [-d] [-l]",
+            "touch": "Create/update file  <name>",
+            "cd": "Change directory    <path>",
+            "cat": "Show the file content <name>",
+            "size": "Show file size <path>",
+            "rm": "Remove file <name> [-f]",
+            "perm": "Show file permissions for a path",
+            "tree": "Show directory tree [path]",
+            "logs": "Watch the logs of a file <name>",
+        },
+        "Network Commands": {
+            "ping": "Send ICMP echo requests: ping <host>",
+            "dns": "Resolve a hostname to an IP address: dns <hostname>",
+            "ip": "Show IP information: ip [options] [hostname]",
+            "curl": "Makes a web request: curl <url> [-X <method>] [-H <header>] [-d <data>]",
+            # "netstat": "Show network connections: netstat [-t] [-u] [-a] [-p]",
+            "traceroute": "Show the route to a host: traceroute <hostname> [-d]",
+            "nslookup": "Resolve a hostname to an IP address: nslookup <hostname>",
+        },
+        "Server Monitoring Commands": {
+            "watch": "Watch a registered server: watch <server-name> [-i seconds] [-m cpu,memory] [-n count]",
+            "watch-server": "Watch a registered server: watch-server <server-name> [-i seconds] [-m cpu,memory] [-n count]",
+            "add-server": "Register a server: add-server <name> <ip> <port>",
+            "remove-server": "Remove a server: remove-server <name>",
+            "servers": "List all registered servers",
+        },
+        "System Commands": {
+            "clear": "Clear screen",
+            "help": "Show this help",
+            "exit": "Exit shell",
+            "q": "Exit shell (alias)",
+        }
     }
 
     @staticmethod
@@ -36,6 +51,8 @@ class HelpCommand:
         Usage: help
         """
         print("\nAvailable Commands:")
-        for cmd, desc in HelpCommand.HELP_TEXT.items():
-            print(f"  {cmd:<8}  {desc}")
+        for category, commands in HelpCommand.HELP_TEXT.items():
+            print(f"\n[{category}]")
+            for cmd, desc in commands.items():
+                print(f"  {cmd:<14}  {desc}")
         print()
