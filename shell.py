@@ -10,6 +10,7 @@ from commands.permission_commands import Permissions
 from commands.watch_command import WatchServerCommand
 from commands.server_commands import ServerCommands
 from commands.network_commands import NetWorkcommands
+from commands.git_commands import GitCommands
 from utils import Formatter, Logger, Validator
 
 try:
@@ -32,6 +33,7 @@ class Shell:
         self.server_watcher = WatchServerCommand(self.server_registry)
         self.server_cmds = ServerCommands(self.server_registry)
         self.network_commands = network_commands or NetWorkcommands()
+        self.git_commands = GitCommands()
 
         self.commands = {
             "pwd": DirectoryCommands.pwd,
@@ -61,6 +63,7 @@ class Shell:
             # "netstat": self.network_commands.netstat,
             "traceroute": self.network_commands.traceroute,
             "nslookup": self.network_commands.nslookup,
+            "git": self.git_commands.execute,
             "exit": self._handle_exit,
             "q": self._handle_exit,
         }

@@ -4,6 +4,36 @@ from utils import Formatter, Validator
 
 _VALIDATOR = Validator()
 
+# File Management
+
+# Advanced File Operations
+# ──────────────────────────────────────
+# [ ] cp           # Copy files/directories
+# [ ] mv           # Move/Rename files/directories
+# [ ] cat          # Display file contents
+# [ ] head         # Show first N lines of file
+# [ ] tail         # Show last N lines of file
+# [ ] grep         # Search text inside files
+# [ ] stat         # Show detailed file metadata
+# [ ] checksum     # Generate SHA256/MD5 hash
+# [ ] diff         # Compare two files
+
+# Batch File Operations
+# ──────────────────────────────────────
+# [ ] rename       # Batch rename files
+# [ ] chmod-many   # Change permissions for multiple files
+# [ ] compress-many# Compress multiple files/directories
+
+# DevOps / Software Engineer Priority
+# ──────────────────────────────────────
+# Must Have
+# [ ] cat
+# [ ] grep
+# [ ] tail
+# [ ] cp
+# [ ] mv
+# [ ] stat
+# [ ] checksum
 
 class FileCommands:
     """Handles file-related shell commands."""

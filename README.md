@@ -81,6 +81,7 @@ The `watch` command connects to a registered server and streams live metrics (CP
 | `nslookup <hostname>`                                         | Query Internet name servers interactively                             |
 | `clear`                                                       | Clear the screen                                                      |
 | `help`                                                        | Display help text                                                     |
+| `git [command] [args]`                                        | Execute any git command seamlessly within the shell                   |
 | `exit` / `q`                                                  | Exit the shell                                                        |
 
 ---
@@ -180,6 +181,7 @@ dev_shell/
 ├── commands/               # Command modules grouped by feature
 │   ├── directory_commands.py
 │   ├── file_commands.py
+│   ├── git_commands.py
 │   ├── help_command.py
 │   ├── log_commands.py
 │   ├── network_commands.py
@@ -261,49 +263,49 @@ Each monitored machine will run a lightweight agent that automatically registers
 The following command categories are currently in development or planned for future releases:
 
 ### File Management
-* Advanced file operations
-* Batch file operations
-* File search and filtering
+- [ ] Advanced file operations
+- [ ] Batch file operations
+- [x] File search and filtering (`find`)
 
 ### File Editing
-* In-dev_shell text editor integration
-* Quick file editing commands
+- [ ] In-dev_shell text editor integration
+- [ ] Quick file editing commands
 
 ### System Information
-* Detailed system information display
-* Hardware specifications
-* OS and environment details
+- [ ] Detailed system information display
+- [ ] Hardware specifications
+- [ ] OS and environment details
 
 ### Process Management
-* Process listing and monitoring
-* Process control commands
-* Resource usage per process
+- [ ] Process listing and monitoring
+- [ ] Process control commands
+- [ ] Resource usage per process
 
 ### Networking
-* Network status commands
-* Connection monitoring
-* DNS resolution tools
-* Network diagnostics
+- [x] Network status commands (`ip`)
+- [ ] Connection monitoring
+- [x] DNS resolution tools (`dns`, `nslookup`)
+- [x] Network diagnostics (`ping`, `traceroute`, `curl`)
 
 ### Git Commands
-* Git integration within the shell
-* Repository status and operations
-* Commit and branch management
+- [x] Git integration within the shell
+- [x] Repository status and operations
+- [x] Commit and branch management
 
 ### Docker Commands
-* Docker container management
-* Image operations
-* Container monitoring and logs
+- [ ] Docker container management
+- [ ] Image operations
+- [ ] Container monitoring and logs
 
 ### Kubernetes Commands
-* Kubernetes cluster interaction
-* Pod and deployment management
-* Resource monitoring
+- [ ] Kubernetes cluster interaction
+- [ ] Pod and deployment management
+- [ ] Resource monitoring
 
 ### Server Monitoring
-* Enhanced server health checks
-* Performance metrics aggregation
-* Multi-server dashboards
+- [x] Enhanced server health checks (`watch`, `watch-server`)
+- [x] Performance metrics aggregation (Prometheus integration)
+- [ ] Multi-server dashboards
 
 ---
 
