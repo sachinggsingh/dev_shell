@@ -64,6 +64,11 @@ The `watch` command connects to a registered server and streams live metrics (CP
 | `touch <name>`                                                | Create a file if it does not exist                                    |
 | `edit <editor-name> <filename>`                               | Edit the file with the editor installed                               |
 | `rm <name> [-f]`                                              | Remove a file with optional force                                     |
+| `cat <name>`                                                  | Show the file content                                                 |
+| `copy <source> <destination>`                                   | Copy files or directories                                             |
+| `move <source> <destination>`                                   | Move or rename files or directories                                   |
+| `head <file> [-n lines]`                                      | Show first N lines of a file                                          |
+| `tail <file> [-n lines]`                                      | Show last N lines of a file                                           |
 | `find <name> [-f] [-d] [-l]`                                  | Find files or directories recursively                                 |
 | `tree [path] [-d] [-f] [-L depth]`                            | Display directory tree with filters and depth control                 |
 | `size <path>`                                                 | Show file or directory size                                           |
@@ -264,7 +269,7 @@ Each monitored machine will run a lightweight agent that automatically registers
 The following command categories are currently in development or planned for future releases:
 
 ### File Management
-- [ ] Advanced file operations
+- [x] Advanced file operations (`cat`, `cp`, `mv`, `head`, `tail`)
 - [ ] Batch file operations
 - [x] File search and filtering (`find`)
 

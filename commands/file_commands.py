@@ -3,6 +3,7 @@ import os
 import subprocess
 import shutil
 from utils import Formatter, Validator
+from collections import deque
 
 _VALIDATOR = Validator()
 
@@ -10,11 +11,11 @@ _VALIDATOR = Validator()
 
 # Advanced File Operations
 # ──────────────────────────────────────
-# [ ] cp           # Copy files/directories
-# [ ] mv           # Move/Rename files/directories
-# [ ] cat          # Display file contents
-# [ ] head         # Show first N lines of file
-# [ ] tail         # Show last N lines of file
+# [x] cp           # Copy files/directories
+# [x] mv           # Move/Rename files/directories
+# [x] cat          # Display file contents
+# [x] head         # Show first N lines of file
+# [x] tail         # Show last N lines of file
 # [ ] grep         # Search text inside files
 # [ ] stat         # Show detailed file metadata
 # [ ] checksum     # Generate SHA256/MD5 hash
@@ -29,11 +30,11 @@ _VALIDATOR = Validator()
 # DevOps / Software Engineer Priority
 # ──────────────────────────────────────
 # Must Have
-# [ ] cat
+# [x] cat
 # [ ] grep
-# [ ] tail
-# [ ] cp
-# [ ] mv
+# [x] tail
+# [x] cp
+# [x] mv
 # [ ] stat
 # [ ] checksum
 
@@ -336,6 +337,10 @@ class FileCommands:
 
     @staticmethod
     def edit(args):
+        """
+        Edit a file
+        edit <editor-name> <filepath>
+        """
 
         if len(args) < 2:
             print("Usage: edit <vim|nvim> <file>")
@@ -358,4 +363,203 @@ class FileCommands:
         except FileNotFoundError:
             print(
                 f"{editor} is not installed or not available in PATH"
+            )
+    @staticmethod
+    def move(args):
+        """
+        Move command
+        Usage move <file_path> <destination_path>
+        """
+
+        if len(args) != 2:
+            print("Usage: move <source> <destination>")
+            return
+
+        source = args[0]
+        destination = args[1]
+
+        if not os.path.exists(source):
+            print(f"Source not found: {source}")
+            return
+
+        try:
+            shutil.move(source, destination)
+            print(
+                f"Moved '{source}' -> '{destination}'"
+            )
+        except PermissionError:
+            print(
+                "Permission denied"
+            )
+        except FileNotFoundError:
+            print(
+                f"Source not found: {source}"
+            )
+        except Exception as e:
+            print(
+                f"Error moving file: {e}"
+            )
+
+    @staticmethod
+    def cp(args):
+        """
+         copy command
+        Usage copy <file_path> <destination_path>
+
+        """
+        if len(args) != 2:
+            print("Usage: move <source> <destination>")
+            return
+        
+        source = args[0]
+        destination = args[1]
+
+        if not os.path.exists(source):
+            print(f"Source not found: {source}")
+            return
+
+        try:
+            shutil.copy(source, destination)
+            print(
+                f"Moved '{source}' -> '{destination}'"
+            )
+        except PermissionError:
+            print(
+                "Permission denied"
+            )
+        except FileNotFoundError:
+            print(
+                f"Source not found: {source}"
+            )
+        except Exception as e:
+            print(
+                f"Error moving file: {e}"
+            )
+        
+    @staticmethod
+    def head(args):
+        """
+        Show first N lines of a file.
+
+        Usage:
+            head <file>
+            head <file> -n 20
+        """
+
+        if not args:
+            print("Usage: head <file> [-n lines]")
+            return
+
+        filename = args[0]
+        lines_count = 10
+
+        if "-n" in args:
+
+            try:
+                idx = args.index("-n")
+
+                lines_count = int(
+                    args[idx + 1]
+                )
+
+            except (
+                ValueError,
+                IndexError
+            ):
+                print(
+                    "Invalid value for -n"
+                )
+                return
+
+        if not os.path.exists(filename):
+            print(
+                f"File not found: {filename}"
+            )
+            return
+
+        try:
+
+            with open(
+                filename,
+                "r"
+            ) as file:
+
+                for i, line in enumerate(file):
+
+                    if i >= lines_count:
+                        break
+
+                    print(
+                        line.rstrip()
+                    )
+
+        except Exception as e:
+
+            print(
+                f"Error: {e}"
+            )
+
+    @staticmethod
+    def tail(args):
+        """
+        Show last N lines of a file.
+
+        Usage:
+            tail <file>
+            tail <file> -n 20
+        """
+
+        if not args:
+            print("Usage: tail <file> [-n lines]")
+            return
+
+        filename = args[0]
+        lines_count = 10
+
+        if "-n" in args:
+
+            try:
+                idx = args.index("-n")
+
+                lines_count = int(
+                    args[idx + 1]
+                )
+
+            except (
+                ValueError,
+                IndexError
+            ):
+                print(
+                    "Invalid value for -n"
+                )
+                return
+
+        if not os.path.exists(filename):
+            print(
+                f"File not found: {filename}"
+            )
+            return
+
+        try:
+
+            with open(
+                filename,
+                "r"
+            ) as file:
+
+                last_lines = deque(
+                    file,
+                    maxlen=lines_count
+                )
+
+            for line in last_lines:
+
+                print(
+                    line.rstrip()
+                )
+
+        except Exception as e:
+
+            print(
+                f"Error: {e}"
             )
