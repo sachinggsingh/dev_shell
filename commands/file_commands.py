@@ -1,5 +1,7 @@
 """File manipulation commands."""
 import os
+import subprocess
+import shutil
 from utils import Formatter, Validator
 
 _VALIDATOR = Validator()
@@ -306,9 +308,9 @@ class FileCommands:
                 f"No matches found for "
                 f"'{search_term}'"
             )
-
+            
             return
-
+        
         print(
             f"\nFound "
             f"{len(matches)} "
@@ -331,3 +333,29 @@ class FileCommands:
                 print(
                     f"[{item_type}] {path}"
                 )
+
+    @staticmethod
+    def edit(args):
+
+        if len(args) < 2:
+            print("Usage: edit <vim|nvim> <file>")
+            return
+
+        editor = args[0]
+        file_name = args[1]
+
+        if editor not in ("vim", "nvim"):
+            print("Editor must be either 'vim' or 'nvim'")
+            return
+
+        if not os.path.exists(file_name):
+            print(f"File not found: {file_name}")
+            return
+
+        try:
+            subprocess.run([editor, file_name])
+
+        except FileNotFoundError:
+            print(
+                f"{editor} is not installed or not available in PATH"
+            )

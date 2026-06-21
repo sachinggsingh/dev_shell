@@ -46,6 +46,7 @@ class Shell:
             "cd": DirectoryCommands.cd,
             "clear": SystemCommands.clear,
             "cat": FileCommands.cat,
+            "edit": FileCommands.edit,
             "tree": DirectoryCommands.tree,
             "logs": LogCommands.logs,
             "watch": self.server_watcher.execute,

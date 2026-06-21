@@ -62,6 +62,7 @@ The `watch` command connects to a registered server and streams live metrics (CP
 | `mkdir <name> [-p]`                                           | Create directory with optional parent creation                        |
 | `rmdir <name> [-r]`                                           | Remove directory, optionally recursively                              |
 | `touch <name>`                                                | Create a file if it does not exist                                    |
+| `edit <editor-name> <filename>`                               | Edit the file with the editor installed                               |
 | `rm <name> [-f]`                                              | Remove a file with optional force                                     |
 | `find <name> [-f] [-d] [-l]`                                  | Find files or directories recursively                                 |
 | `tree [path] [-d] [-f] [-L depth]`                            | Display directory tree with filters and depth control                 |
@@ -268,8 +269,8 @@ The following command categories are currently in development or planned for fut
 - [x] File search and filtering (`find`)
 
 ### File Editing
-- [ ] In-dev_shell text editor integration
-- [ ] Quick file editing commands
+- [x] In-DevShell text editor integration (Vim/Neovim) — Seamlessly open and edit files without leaving the shell environment. This feature leverages the user's local Vim/Neovim installation and requires the editor to be available in the system PATH.
+- [x] Quick file editing commands
 
 ### System Information
 - [ ] Detailed system information display

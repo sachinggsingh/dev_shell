@@ -14,6 +14,7 @@ class HelpCommand:
             "touch": "Create/update file  <name>",
             "cd": "Change directory    <path>",
             "cat": "Show the file content <name>",
+            "edit": "Edit the file content <name>",
             "size": "Show file size <path>",
             "rm": "Remove file <name> [-f]",
             "perm": "Show file permissions for a path",
