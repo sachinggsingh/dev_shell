@@ -4,6 +4,9 @@ import subprocess
 import shutil
 from utils import Formatter, Validator
 from collections import deque
+from datetime import datetime
+import hashlib
+
 
 _VALIDATOR = Validator()
 
@@ -16,10 +19,10 @@ _VALIDATOR = Validator()
 # [x] cat          # Display file contents
 # [x] head         # Show first N lines of file
 # [x] tail         # Show last N lines of file
-# [ ] grep         # Search text inside files
-# [ ] stat         # Show detailed file metadata
-# [ ] checksum     # Generate SHA256/MD5 hash
-# [ ] diff         # Compare two files
+# [x] grep         # Search text inside files
+# [x] stat         # Show detailed file metadata
+# [x] checksum     # Generate SHA256/MD5 hash
+# [x] diff         # Compare two files
 
 # Batch File Operations
 # ──────────────────────────────────────
@@ -31,12 +34,14 @@ _VALIDATOR = Validator()
 # ──────────────────────────────────────
 # Must Have
 # [x] cat
-# [ ] grep
+# [x] grep
 # [x] tail
 # [x] cp
 # [x] mv
-# [ ] stat
-# [ ] checksum
+# [x] head
+# [x] stat
+# [x] checksum
+# [x] diff
 
 class FileCommands:
     """Handles file-related shell commands."""
@@ -557,6 +562,295 @@ class FileCommands:
                 print(
                     line.rstrip()
                 )
+
+        except Exception as e:
+
+            print(
+                f"Error: {e}"
+            )
+
+
+    @staticmethod
+    def grep(args):
+        """
+        Usage:
+        grep <pattern> <file>
+        grep <pattern> <file> -i
+        grep <pattern> <file> -n
+        grep <pattern> <file> -c
+        grep <pattern> <file> -v
+        grep <pattern> <directory> -r
+        """
+
+        if len(args) < 2:
+            print(
+                "Usage: grep <pattern> <file> "
+                "[-i] [-n] [-c] [-v] [-r]"
+            )
+            return
+
+        pattern = args[0]
+        target = args[1]
+
+        ignore_case = "-i" in args
+        show_line_numbers = "-n" in args
+        count_only = "-c" in args
+        invert_match = "-v" in args
+        recursive = "-r" in args
+
+        matches = 0
+
+        def process_file(filename):
+
+            nonlocal matches
+
+            try:
+
+                with open(
+                    filename,
+                    "r",
+                    encoding="utf-8",
+            errors="ignore"
+                ) as file:
+
+                    for line_number, line in enumerate(
+                        file,
+                          start=1
+                    ):
+
+                        content = line.rstrip()
+
+                        if ignore_case:
+
+                            found = (
+                                pattern.lower()
+                                in content.lower()
+                            )
+
+                        else:
+
+                            found = (
+                                pattern
+                                in content
+                            )
+
+                        if invert_match:
+                            found = not found
+
+                        if found:
+
+                            matches += 1
+
+                            if count_only:
+                                continue
+
+                            if show_line_numbers:
+
+                                print(
+                                    f"{line_number}: "
+                                    f"{content}"
+                                )
+
+                            else:
+
+                                print(content)
+
+            except Exception as e:
+
+                print(
+                    f"Error reading "
+                    f"{filename}: {e}"
+                )
+
+        if recursive:
+    
+            if not os.path.isdir(target):
+
+                print(
+                    f"Directory not found: "
+                    f"{target}"
+                )
+
+                return
+
+            for root, _, files in os.walk(
+                target
+            ):
+
+                for file in files:
+
+                    process_file(
+                        os.path.join(
+                            root,
+                            file
+                        )
+                    )
+
+        else:
+
+            if not os.path.exists(target):
+
+                print(
+                    f"File not found: "
+                    f"{target}"
+                )
+
+                return
+
+            process_file(target)
+
+        if count_only:
+
+            print(
+                f"Total matches: "
+                f"{matches}"
+            )
+
+
+
+#  Can be improved better , we can add more details about the file permissions , file size etc in good format and meaningful way
+    @staticmethod
+    def stat(args):
+        """
+        Show detailed file metadata.
+
+        Usage:
+            stat <file>
+        """
+
+        if not args:
+            print("Usage: stat <file>")
+            return
+
+        filename = args[0]
+
+        if not os.path.exists(filename):
+            print(
+                f"File not found: {filename}"
+            )
+            return
+
+        try:
+            stat_info = os.stat(filename)
+            
+            print(
+                f"File: {filename}"
+            )
+            print(
+                f"Size: {stat_info.st_size} bytes"
+            )
+            print(
+                f"Last modified: {datetime.fromtimestamp(stat_info.st_mtime)}"
+            )
+            print(
+                f"Last accessed: {datetime.fromtimestamp(stat_info.st_atime)}"
+            )
+            print(
+                f"Created: {datetime.fromtimestamp(stat_info.st_ctime)}"
+            )
+            print(
+                f"Permissions: {stat_info.st_mode}"
+            )
+            print(
+                f"Owner: {stat_info.st_uid}"
+            )
+            print(
+                f"Group: {stat_info.st_gid}"
+            )
+            print(
+                f"File type: {stat_info.st_mode}"
+            )
+
+        except Exception as e:
+            print(
+                f"Error: {e}"
+            )
+
+    @staticmethod
+    def checksum(args):
+        """
+        Calculate checksum of a file.
+
+        Usage:
+            checksum <file>
+        """
+
+        if not args:
+            print("Usage: checksum <file>")
+            return
+
+        filename = args[0]
+
+        if not os.path.exists(filename):
+            print(
+                f"File not found: {filename}"
+            )
+            return
+
+        try:
+            with open(
+                filename,
+                "rb"
+            ) as file:
+                checksum = hashlib.sha256(file.read()).hexdigest()
+                print(checksum)
+        except Exception as e:
+            print(
+                f"Error: {e}"
+            )
+
+    @staticmethod
+    def diff(args):
+        """
+        Compare two files.
+
+        Usage:
+            diff <file1> <file2>
+        """
+
+        if len(args) != 2:
+            print("Usage: diff <file1> <file2>")
+            return
+
+        file1 = args[0]
+        file2 = args[1]
+
+        if not os.path.exists(file1):
+            print(
+                f"File not found: {file1}"
+            )
+            return
+
+        if not os.path.exists(file2):
+            print(
+                f"File not found: {file2}"
+            )
+            return
+
+        try:
+
+            with open(
+                file1,
+                "r"
+            ) as f1, open(
+                file2,
+                "r"
+            ) as f2:
+
+                for i, (line1, line2) in enumerate(
+                    zip(
+                        f1,
+                        f2
+                    )
+                ):
+
+                    if line1 != line2:
+
+                        print(
+                            f"{i+1}: "
+                            f"{line1.rstrip()} != "
+                            f"{line2.rstrip()}"
+                        )
 
         except Exception as e:
 
