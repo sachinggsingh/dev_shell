@@ -10,7 +10,7 @@ from commands.permission_commands import Permissions
 from commands.watch_command import WatchServerCommand
 from commands.server_commands import ServerCommands
 from commands.network_commands import NetWorkcommands
-from commands.git_commands import GitCommands
+from integration.git_commands import GitCommands
 from utils import Formatter, Logger, Validator
 
 try:
@@ -45,6 +45,7 @@ class Shell:
             "rm": FileCommands.rm,
             "cd": DirectoryCommands.cd,
             "clear": SystemCommands.clear,
+            "rename": FileCommands.rename,
             "cat": FileCommands.cat,
             "copy": FileCommands.cp,
             "move": FileCommands.move,

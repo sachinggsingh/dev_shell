@@ -15,6 +15,7 @@ class HelpCommand:
             "cd": "Change directory    <path>",
             "cat": "Show the file content <name>",
             "copy": "Copy files/directories <source> <destination>",
+            "rename": "Rename file <old_file> <new_file>",
             "move": "Move/Rename files <source> <destination>",
             "stat": "Show detailed file metadata <path>",
             "grep": "Search text inside files <pattern> <file>  [-i] [-n] [-c] [-v] [-r]",
