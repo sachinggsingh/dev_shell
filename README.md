@@ -94,19 +94,24 @@ The `watch` command connects to a registered server and streams live metrics (CP
 
 ## Getting Started
 
-Run the shell:
+Install the package in editable mode:
 
 ```bash
-python main.py
+pip install -e .
 ```
 
-### Optional Dependency
+Run the shell using any of these entry points:
 
 ```bash
-pip install psutil
+dev-shell
+python -m dev_shell
 ```
 
-Required for CPU and memory monitoring features.
+For development dependencies (pylint, pytest):
+
+```bash
+pip install -e ".[dev]"
+```
 
 ---
 
@@ -180,37 +185,43 @@ dev_shell> watch web1
 ### Project Structure
 
 ```text
-dev_shell/
-├── main.py                 # Shell entry point
-├── shell.py                # Core shell dispatcher and command registry
-├── requirements.txt        # Python dependencies
-├── commands/               # Command modules grouped by feature
-│   ├── directory_commands.py
-│   ├── file_commands.py
-│   ├── git_commands.py
-│   ├── help_command.py
-│   ├── log_commands.py
-│   ├── network_commands.py
-│   ├── permission_commands.py
-│   ├── server_commands.py
-│   ├── system_commands.py
-│   ├── tree_command.py
-│   └── watch_command.py
-│
-├── config/                 # Configuration files
-│   └── prometheus.json
-│
-├── monitoring/             # Monitoring and observability clients
-│   ├── prometheus_client.py
-│   └── queries.py
-│
-├── tests/                  # Unit tests
+dev-shell/
+├── pyproject.toml              # Package metadata, dependencies, CLI entry point
+├── requirements.txt            # Legacy pip reference (use pyproject.toml)
+├── README.md
+├── src/
+│   └── dev_shell/              # Installable Python package
+│       ├── __init__.py
+│       ├── __main__.py         # python -m dev_shell
+│       ├── cli.py                # dev-shell console script entry point
+│       ├── core/
+│       │   ├── shell.py          # Interactive shell loop and dispatcher
+│       │   └── registry.py       # Central command name → handler mapping
+│       ├── commands/             # Built-in shell commands by domain
+│       │   ├── directory/        # pwd, cd, mkdir, rmdir, tree
+│       │   ├── file/             # ls, cat, grep, copy, stat, …
+│       │   ├── system/           # cpu, memory, disk, processes, …
+│       │   ├── network/          # ping, dns, ip, curl, traceroute
+│       │   ├── server/           # watch, add-server, servers
+│       │   ├── logs/             # logs
+│       │   ├── permissions/      # perm
+│       │   └── meta/             # help
+│       ├── integration/          # External tool wrappers (git, docker)
+│       │   ├── git_commands.py
+│       │   └── docker_commands.py
+│       ├── monitoring/           # Observability clients and PromQL queries
+│       │   ├── prometheus_client.py
+│       │   └── queries.py
+│       ├── utils/                # Shared helpers (logging, formatting, validation)
+│       │   ├── formatters.py
+│       │   ├── logger.py
+│       │   └── validators.py
+│       └── config/               # Bundled default configuration
+│           └── prometheus.json
+├── tests/
 │   └── test_network_commands.py
-│
-└── utils/                  # Shared utilities
-    ├── formatters.py
-    ├── logger.py
-    └── validators.py
+└── .github/workflows/
+    └── lint.yml
 ```
 
 ### Current Monitoring Architecture
@@ -270,7 +281,7 @@ The following command categories are currently in development or planned for fut
 
 ### File Management
 - [x] Advanced file operations (`cat`, `cp`, `mv`, `head`, `tail`)
-- [ ] Batch file operations
+- [x] Batch file operations
 - [x] File search and filtering (`find`)
 
 ### File Editing
@@ -278,9 +289,9 @@ The following command categories are currently in development or planned for fut
 - [x] Quick file editing commands
 
 ### System Information
-- [ ] Detailed system information display
-- [ ] Hardware specifications
-- [ ] OS and environment details
+- [x] Detailed system information display
+- [x] Hardware specifications
+- [x] OS and environment details
 
 ### Process Management
 - [ ] Process listing and monitoring
@@ -299,9 +310,9 @@ The following command categories are currently in development or planned for fut
 - [x] Commit and branch management
 
 ### Docker Commands
-- [ ] Docker container management
-- [ ] Image operations
-- [ ] Container monitoring and logs
+- [x] Docker container management
+- [x] Image operations
+- [x] Container monitoring and logs
 
 ### Kubernetes Commands
 - [ ] Kubernetes cluster interaction

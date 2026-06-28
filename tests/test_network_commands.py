@@ -2,7 +2,7 @@ import io
 import unittest
 from contextlib import redirect_stdout
 
-from commands.network_commands import NetWorkcommands
+from dev_shell.commands.network import NetWorkcommands
 
 
 class NetworkCommandsTests(unittest.TestCase):

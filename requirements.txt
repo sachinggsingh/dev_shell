@@ -1,2 +1,6 @@
+# Install from pyproject.toml (recommended):
+#   pip install -e .
+#
+# Or install runtime dependencies directly:
 psutil
 requests

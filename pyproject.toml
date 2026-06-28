@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dev-shell"
+version = "0.1.0"
+description = "A custom developer shell for file, system, and server operations"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "dev-shell contributors" }]
+dependencies = [
+    "psutil",
+    "requests",
+]
+
+[project.scripts]
+dev-shell = "dev_shell.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pylint",
+    "pytest",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+dev_shell = ["config/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
