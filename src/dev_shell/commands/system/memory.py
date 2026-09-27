@@ -32,5 +32,5 @@ def memory(args):
             row("Free Swap:", bytes_to_human(swap.free))
             row("Swap Usage:", f"{swap.percent:.1f}%")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[memory] Error: {exc}")

@@ -27,7 +27,7 @@ def mkdir(args):
         print(f"Created folder: {target}")
     except FileExistsError:
         print(f"mkdir: cannot create directory '{target}': File exists")
-    except Exception as e:
+    except OSError as e:
         print(f"Error creating directory: {e}")
 
 
@@ -47,7 +47,7 @@ def rmdir(args):
         try:
             shutil.rmtree(target)
             print(f"Removed folder (recursively): {target}")
-        except Exception as e:
+        except OSError as e:
             print(f"Error removing folder: {e}")
     else:
         try:

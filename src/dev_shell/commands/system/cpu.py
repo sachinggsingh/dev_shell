@@ -52,5 +52,5 @@ def cpu(args):
             row("Min:", f"{freq.min:.0f} MHz")
             row("Max:", f"{freq.max:.0f} MHz")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[cpu] Error: {exc}")

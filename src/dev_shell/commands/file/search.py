@@ -4,7 +4,6 @@ import os
 
 from dev_shell.utils import Formatter
 
-
 IGNORE_DIRS = {
     ".venv",
     "venv",
@@ -87,7 +86,7 @@ def grep(args):
         nonlocal matches
 
         try:
-            with open(filename, "r", encoding="utf-8", errors="ignore") as file:
+            with open(filename, encoding="utf-8", errors="ignore") as file:
                 for line_number, line in enumerate(file, start=1):
                     content = line.rstrip()
 
@@ -109,7 +108,7 @@ def grep(args):
                             print(f"{line_number}: {content}")
                         else:
                             print(content)
-        except Exception as e:
+        except OSError as e:
             print(f"Error reading {filename}: {e}")
 
     if recursive:

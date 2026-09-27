@@ -60,9 +60,12 @@ def ip(args):
             target, None, type=socket.SOCK_STREAM
         ):
             address = sockaddr[0]
-            if family == socket.AF_INET and (not ipv6):
-                addresses.append(address)
-            elif family == socket.AF_INET6 and (ipv6 or not ipv4):
+            if (
+                (family == socket.AF_INET
+                and (not ipv6))
+                or (family == socket.AF_INET6
+                and (ipv6 or not ipv4))
+            ):
                 addresses.append(address)
 
         if not addresses:

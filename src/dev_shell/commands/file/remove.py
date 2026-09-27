@@ -33,5 +33,5 @@ def rm(args):
     try:
         os.remove(filename)
         print(Formatter.highlight_success(f"Removed file: {filename}"))
-    except Exception as e:
+    except OSError as e:
         print(Formatter.highlight_error(f"Error removing file: {e}"))

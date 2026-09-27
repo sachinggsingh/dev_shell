@@ -30,7 +30,9 @@ def processes(args):
                         print("[processes] Invalid value for -n; using default 10.")
 
         proc_list = []
-        for proc in psutil.process_iter(["pid", "name", "cpu_percent", "memory_percent"]):
+        for proc in psutil.process_iter(
+            ["pid", "name", "cpu_percent", "memory_percent"]
+        ):
             try:
                 proc_list.append(proc.info)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
@@ -38,7 +40,9 @@ def processes(args):
 
         time.sleep(0.2)
         proc_list.clear()
-        for proc in psutil.process_iter(["pid", "name", "cpu_percent", "memory_percent"]):
+        for proc in psutil.process_iter(
+            ["pid", "name", "cpu_percent", "memory_percent"]
+        ):
             try:
                 proc_list.append(proc.info)
             except (psutil.NoSuchProcess, psutil.AccessDenied):
@@ -60,5 +64,5 @@ def processes(args):
             mem = p.get("memory_percent") or 0.0
             print(f"  {pid:>7}  {name:<30} {cpu:>5.1f}%  {mem:>5.1f}%")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[processes] Error: {exc}")
