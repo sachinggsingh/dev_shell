@@ -1,3 +1,6 @@
+"""Prometheus query templates for monitoring."""
+
+
 class Queries:
     @staticmethod
     def get_queries(job_name):

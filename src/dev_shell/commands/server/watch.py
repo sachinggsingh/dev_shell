@@ -1,18 +1,17 @@
 """Real-time server monitoring command."""
 
-import os
 import time
 
-from dev_shell.monitoring.prometheus_client import PrometheusClient
-from dev_shell.monitoring.queries import Queries
+from dev_shell.monitoring.provider.grafana import GrafanaProvider
+from dev_shell.render.metrics_panel import render_metrics_panel
 
 
 class WatchServerCommand:
-    """Stream Prometheus metrics for a registered server."""
+    """Stream Grafana-backed metrics for a registered server."""
 
-    def __init__(self, registry):
+    def __init__(self, registry, provider=None):
         self.registry = registry
-        self.prom_client = PrometheusClient()
+        self.provider = provider or GrafanaProvider()
 
     @staticmethod
     def _print_usage():
@@ -83,86 +82,39 @@ class WatchServerCommand:
         server = self.registry[server_name]
         job_name = server.get("job")
         if not job_name:
-            print(f"Error: Server '{server_name}' has no job configured for Prometheus")
+            print(f"Error: Server '{server_name}' has no job configured for Grafana")
             return
 
-        queries = Queries.get_queries(job_name)
+        if not self.provider.ping():
+            print(
+                "Error: Grafana is unreachable. "
+                "Check src/dev_shell/config/grafana.json "
+                "(host, port, api_key, datasource_uid)."
+            )
+            return
+
         loop_count = 0
         error_msg = ""
 
         try:
             while count is None or loop_count < count:
-                os.system("cls" if os.name == "nt" else "clear")
-
-                metrics_data = {}
+                summary = {}
                 online = True
+
                 try:
-                    metrics_data["cpu"] = self.prom_client.query(queries["cpu"])
-                    metrics_data["memory"] = self.prom_client.query(queries["memory"])
-                    metrics_data["requests_per_sec"] = self.prom_client.query(
-                        queries["requests_per_sec"]
-                    )
-                    metrics_data["error_rate"] = self.prom_client.query(
-                        queries["error_rate"]
-                    )
-                    metrics_data["latency_p95"] = self.prom_client.query(
-                        queries["latency_p95"]
-                    )
+                    summary = self.provider.get_summary(job_name)
                 except Exception as e:
                     online = False
                     error_msg = str(e)
 
-                print("=" * 40)
-                print(f"Watching: {server_name}")
-                print("=" * 40)
-                print()
+                render_metrics_panel(
+                    summary,
+                    source_name="grafana",
+                    target=f"{server_name} ({job_name})",
+                )
 
-                if metrics_data.get("cpu") is not None:
-                    cpu_val = float(metrics_data["cpu"]) * 100
-                    print(f"CPU: {cpu_val:.2f}%")
-                else:
-                    print("CPU: unavailable")
-
-                print()
-
-                if metrics_data.get("memory") is not None:
-                    mem_val = float(metrics_data["memory"]) / (1024 * 1024)
-                    print(f"Memory: {mem_val:.2f} MB")
-                else:
-                    print("Memory: unavailable")
-
-                print()
-
-                if metrics_data.get("requests_per_sec") is not None:
-                    req_val = float(metrics_data["requests_per_sec"])
-                    print(f"Requests/sec: {req_val:.2f}")
-                else:
-                    print("Requests/sec: unavailable")
-
-                print()
-
-                if metrics_data.get("error_rate") is not None:
-                    err_val = float(metrics_data["error_rate"]) * 100
-                    print(f"Error Rate: {err_val:.2f}%")
-                else:
-                    print("Error Rate: unavailable")
-
-                print()
-
-                if (
-                    metrics_data.get("latency_p95") is not None
-                    and str(metrics_data["latency_p95"]).lower() != "nan"
-                ):
-                    lat_val = float(metrics_data["latency_p95"]) * 1000
-                    print(f"Latency P95: {lat_val:.2f}ms")
-                else:
-                    print("Latency P95: unavailable")
-
-                print()
                 status_text = "Healthy" if online else f"Offline ({error_msg})"
-                print(f"Status: {status_text}")
-                print()
-                print("=" * 40)
+                print(f"\n  Status: {status_text}")
 
                 loop_count += 1
                 if count is not None and loop_count >= count:

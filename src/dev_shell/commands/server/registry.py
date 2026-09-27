@@ -10,7 +10,7 @@ class ServerCommands:
     @staticmethod
     def _print_add_usage():
         print("Usage: add-server <name> <job>")
-        print("  Registers a new server for monitoring via Prometheus.")
+        print("  Registers a new server job for monitoring via Grafana.")
         print("Example:")
         print("  add-server backend backend-api")
 

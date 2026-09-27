@@ -39,11 +39,12 @@ class HelpCommand:
             "nslookup": "Resolve a hostname to an IP address: nslookup <hostname>",
         },
         "Server Monitoring Commands": {
-            "watch": "Watch a registered server: watch <server-name> [-i seconds] [-m cpu,memory] [-n count]",
-            "watch-server": "Watch a registered server: watch-server <server-name> [-i seconds] [-m cpu,memory] [-n count]",
-            "add-server": "Register a server: add-server <name> <ip> <port>",
+            "watch": "Watch a registered server via Grafana: watch <server-name> [-i seconds] [-n count]",
+            "watch-server": "Watch a registered server via Grafana: watch-server <server-name> [-i seconds] [-n count]",
+            "add-server": "Register a server job: add-server <name> <job>",
             "remove-server": "Remove a server: remove-server <name>",
             "servers": "List all registered servers",
+            "grafana": "Grafana tools: grafana ping | grafana config",
         },
         "Process Commands": {
             "ps": "List and watch system processes interactively",
