@@ -1,7 +1,14 @@
 # monitoring/providers/prometheus.py
-from dev_shell.monitoring.prometheus_client import PrometheusClient
+from dev_shell.monitoring.prometheus_client import (
+    PrometheusClient,
+    PrometheusConnectionError,
+    PrometheusQueryError,
+    PrometheusResponseError,
+)
 from dev_shell.monitoring.queries import Queries
+
 from .base import Provider
+
 
 class PrometheusProvider(Provider):
     kind = "prometheus"
@@ -12,9 +19,14 @@ class PrometheusProvider(Provider):
     def ping(self) -> bool:
         try:
             self.client.query("up")
-            return True
-        except Exception:
+        except (
+            PrometheusConnectionError,
+            PrometheusQueryError,
+            PrometheusResponseError,
+        ):
             return False
+        else:
+            return True
 
     def get_summary(self, job_name: str) -> dict:
         queries = Queries.get_queries(job_name)

@@ -12,7 +12,7 @@ def render_traces_table(traces: list, service: str = ""):
         {"trace_id": str, "root_operation": str, "duration_ms": int,
          "span_count": int, "has_error": bool}
     """
-    title = f"Recent traces" + (f" — {service}" if service else "")
+    title = "Recent traces" + (f" — {service}" if service else "")
     print(title)
     print("-" * max(len(title), 60))
 
@@ -39,7 +39,11 @@ def render_traces_table(traces: list, service: str = ""):
             str(trace.get("span_count", 0)),
             "YES" if trace.get("has_error") else "-",
         ]
-        print("  ".join(f"{val:<{w}}" for val, (_, w) in zip(row, columns)))
+        print(
+            "  ".join(
+                f"{val:<{w}}" for val, (_, w) in zip(row, columns, strict=False)
+            )
+        )
 
     print()
     print(f"  {len(traces)} trace(s). Use `trace <trace_id>` to inspect one.")

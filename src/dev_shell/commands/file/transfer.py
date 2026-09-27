@@ -26,7 +26,7 @@ def move(args):
         print("Permission denied")
     except FileNotFoundError:
         print(f"Source not found: {source}")
-    except Exception as e:
+    except OSError as e:
         print(f"Error moving file: {e}")
 
 
@@ -55,7 +55,7 @@ def cp(args):
         print("Permission denied")
     except FileNotFoundError:
         print(f"Source not found: {source}")
-    except Exception as e:
+    except OSError as e:
         print(f"Error copying file: {e}")
 
 
@@ -98,5 +98,5 @@ def rename(args):
     try:
         os.rename(old_name, new_name)
         print(f"Renamed '{old_name}' -> '{new_name}'")
-    except Exception as e:
+    except OSError as e:
         print(f"Error: {e}")

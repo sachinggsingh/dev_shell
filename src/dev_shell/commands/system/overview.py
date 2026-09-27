@@ -1,5 +1,6 @@
 """System overview commands."""
 
+import getpass
 import os
 import platform
 import socket
@@ -7,7 +8,6 @@ import sys
 import time
 from datetime import timedelta
 
-import getpass
 import psutil
 
 from ._helpers import bytes_to_human, row, section
@@ -56,7 +56,7 @@ def system(args):
         uptime_secs = time.time() - boot_ts
         row("Uptime:", str(timedelta(seconds=int(uptime_secs))))
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[system] Error: {exc}")
 
 
@@ -97,5 +97,5 @@ def hardware(args):
         else:
             print("  Battery: Not available on this system.")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[hardware] Error: {exc}")

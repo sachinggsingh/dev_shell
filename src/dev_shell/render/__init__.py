@@ -11,4 +11,4 @@ from .metrics_panel import render_metrics_panel
 from .trace_table import render_traces_table
 from .trace_tree import render_trace_tree
 
-__all__ = ["render_metrics_panel", "render_traces_table", "render_trace_tree"]
+__all__ = ["render_metrics_panel", "render_trace_tree", "render_traces_table"]

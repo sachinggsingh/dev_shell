@@ -34,12 +34,15 @@ def _format_value(value, unit):
     return f"{value:.3f} {unit}".rstrip()
 
 
-def render_metrics_panel(summary: dict, source_name: str = "", target: str = "", clear: bool = True):
+def render_metrics_panel(
+    summary: dict, source_name: str = "", target: str = "", clear: bool = True
+):
     """Draw one refresh frame of the metrics panel.
 
     summary: dict of metric_name -> raw value, as returned by
              Provider.get_summary(). Missing keys are simply skipped.
-    source_name: label for which connected source this came from (e.g. "prometheus-main")
+    source_name: label for which connected source this came from
+                 (e.g. "prometheus-main")
     target: label for what's being watched (e.g. a job name or service name)
     clear: if True, clears the terminal before drawing (set False for testing/logging)
     """

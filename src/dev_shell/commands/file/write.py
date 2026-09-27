@@ -23,15 +23,16 @@ def touch(args):
         print(Formatter.highlight_error(error))
         return
 
+    if os.path.exists(file_name):
+        print(Formatter.highlight_error(f"touch: '{file_name}' already exists."))
+        return
     try:
-        if os.path.exists(file_name):
-            raise FileExistsError(f"touch: '{file_name}' already exists.")
         with open(file_name, "a", encoding="utf-8"):
             os.utime(file_name, None)
         print(f"Touched file: {file_name}")
     except FileExistsError as e:
         print(Formatter.highlight_error(str(e)))
-    except Exception as e:
+    except OSError as e:
         print(Formatter.highlight_error(f"Error touching file: {e}"))
 
 
@@ -56,6 +57,6 @@ def edit(args):
         return
 
     try:
-        subprocess.run([editor, file_name], check=False)
+        subprocess.run([editor, file_name], check=False)  # noqa: S603
     except FileNotFoundError:
         print(f"{editor} is not installed or not available in PATH")

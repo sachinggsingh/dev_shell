@@ -1,4 +1,5 @@
-"""
+"""Git commands.
+
 Phase 1
 ├── GitPython
 │   ├── git-status
@@ -39,18 +40,17 @@ Phase 3
     └── git-prune
 """
 
-"""Git commands"""
 import subprocess
 
 
 class GitCommands:
-
     @staticmethod
     def _run(command):
         try:
-            subprocess.run(command)
-        except Exception as e:
+            subprocess.run(command, check=False)  # noqa: S603
+        except OSError as e:
             print(f"Error: {e}")
+
     @staticmethod
     def help():
 
@@ -116,13 +116,11 @@ git prune
 
         # Handle custom aliases
         if command == "summary":
-            self._run(["git", "status", "--short"] + args[1:])
+            self._run(["git", "status", "--short", *args[1:]])
         elif command == "branches":
-            self._run(["git", "branch"] + args[1:])
+            self._run(["git", "branch", *args[1:]])
         elif command == "stash-list":
-            self._run(["git", "stash", "list"] + args[1:])
+            self._run(["git", "stash", "list", *args[1:]])
         else:
             # For all other commands, pass them directly to git perfectly
-            self._run(["git"] + args)
-
- 
+            self._run(["git", *args])

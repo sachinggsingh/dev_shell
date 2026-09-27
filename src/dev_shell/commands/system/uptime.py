@@ -1,7 +1,7 @@
 """System uptime commands."""
 
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import psutil
 
@@ -15,7 +15,7 @@ def uptime(args):
     """
     try:
         boot_ts = psutil.boot_time()
-        boot_dt = datetime.fromtimestamp(boot_ts)
+        boot_dt = datetime.fromtimestamp(boot_ts, tz=timezone.utc)
         uptime_secs = int(time.time() - boot_ts)
         delta = timedelta(seconds=uptime_secs)
 
@@ -38,5 +38,5 @@ def uptime(args):
         row("Total Uptime:", str(delta))
         row("Human Readable:", ", ".join(human))
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[uptime] Error: {exc}")

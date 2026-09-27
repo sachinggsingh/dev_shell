@@ -37,5 +37,5 @@ def disk(args):
                 f" {usage.percent:>5.1f}%"
             )
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[disk] Error: {exc}")

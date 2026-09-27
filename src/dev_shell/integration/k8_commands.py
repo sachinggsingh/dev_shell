@@ -3,7 +3,6 @@ import subprocess
 
 
 class K8sCommands:
-
     @staticmethod
     def _run(command, interactive=False):
         if shutil.which("kubectl") is None:
@@ -12,13 +11,14 @@ class K8sCommands:
 
         try:
             if interactive:
-                subprocess.run(command)
+                subprocess.run(command, check=False)  # noqa: S603
                 return
 
-            result = subprocess.run(
+            result = subprocess.run(  # noqa: S603
                 command,
                 text=True,
                 capture_output=True,
+                check=False,
             )
 
             if result.stdout:
@@ -30,7 +30,7 @@ class K8sCommands:
         except KeyboardInterrupt:
             print("\nCommand interrupted.")
 
-        except Exception as e:
+        except OSError as e:
             print(f"Error: {e}")
 
     @staticmethod
@@ -420,35 +420,28 @@ api-versions
             "nodes": ["get", "nodes"],
             "top-nodes": ["top", "nodes"],
             "top-pods": ["top", "pods"],
-
             # Pods
             "pods": ["get", "pods"],
             "all-pods": ["get", "pods", "-A"],
-
             # Workloads
             "deployments": ["get", "deployments"],
             "replicasets": ["get", "replicasets"],
             "statefulsets": ["get", "statefulsets"],
             "daemonsets": ["get", "daemonsets"],
-
             # Networking
             "services": ["get", "services"],
             "ingress": ["get", "ingress"],
             "networkpolicies": ["get", "networkpolicies"],
-
             # Configuration
             "configmaps": ["get", "configmaps"],
             "secrets": ["get", "secrets"],
-
             # Jobs
             "jobs": ["get", "jobs"],
             "cronjobs": ["get", "cronjobs"],
-
             # Storage
             "pv": ["get", "persistentvolumes"],
             "pvc": ["get", "persistentvolumeclaims"],
             "storage": ["get", "storageclasses"],
-
             # RBAC
             "roles": ["get", "roles"],
             "rolebindings": ["get", "rolebindings"],
@@ -457,25 +450,20 @@ api-versions
                 "get",
                 "clusterrolebindings",
             ],
-
             # Service Accounts
             "serviceaccounts": [
                 "get",
                 "serviceaccounts",
             ],
-
             # Autoscaling
             "hpa": [
                 "get",
                 "horizontalpodautoscalers",
             ],
-
             # Namespaces
             "namespaces": ["get", "namespaces"],
-
             # Events
             "events": ["get", "events"],
-
             # Contexts
             "contexts": [
                 "config",
@@ -485,22 +473,16 @@ api-versions
                 "config",
                 "current-context",
             ],
-
             # Resources
             "all": ["get", "all"],
             "all-namespaces": ["get", "all", "-A"],
-
             # Discovery
             "api-resources": ["api-resources"],
             "api-versions": ["api-versions"],
         }
 
         if command in aliases:
-            self._run(
-                ["kubectl"]
-                + aliases[command]
-                + args[1:]
-            )
+            self._run(["kubectl"] + aliases[command] + args[1:])
             return
 
         interactive_commands = {
@@ -512,6 +494,6 @@ api-versions
         }
 
         self._run(
-            ["kubectl"] + args,
+            ["kubectl", *args],
             interactive=command in interactive_commands,
         )

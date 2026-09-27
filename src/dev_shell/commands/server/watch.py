@@ -41,9 +41,12 @@ class WatchServerCommand:
                     return
                 try:
                     interval = float(args[i])
-                    if interval <= 0:
-                        raise ValueError
                 except ValueError:
+                    pass
+                else:
+                    if interval <= 0:
+                        interval = -1  # trigger error below
+                if interval <= 0:
                     print("Error: Interval must be a positive number")
                     return
             elif arg in ("-n", "--count"):
@@ -54,9 +57,12 @@ class WatchServerCommand:
                     return
                 try:
                     count = int(args[i])
-                    if count < 1:
-                        raise ValueError
                 except ValueError:
+                    pass
+                else:
+                    if count < 1:
+                        count = 0  # trigger error below
+                if count is not None and count < 1:
                     print("Error: Count must be a positive integer")
                     return
             elif arg.startswith("-") and arg not in ("-m", "--metrics"):
@@ -103,7 +109,7 @@ class WatchServerCommand:
 
                 try:
                     summary = self.provider.get_summary(job_name)
-                except Exception as e:
+                except OSError as e:
                     online = False
                     error_msg = str(e)
 

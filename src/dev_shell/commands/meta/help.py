@@ -1,10 +1,14 @@
 """Help command."""
 
+from __future__ import annotations
+
+from typing import ClassVar
+
 
 class HelpCommand:
     """Handles the help command."""
 
-    HELP_TEXT = {
+    HELP_TEXT: ClassVar[dict[str, dict[str, str]]] = {
         "File & Directory Commands": {
             "pwd": "Show current directory",
             "ls": "List files/folders [path] [-a] [-l] [-h] [-d]",
@@ -18,7 +22,10 @@ class HelpCommand:
             "rename": "Rename file <old_file> <new_file>",
             "move": "Move/Rename files <source> <destination>",
             "stat": "Show detailed file metadata <path>",
-            "grep": "Search text inside files <pattern> <file>  [-i] [-n] [-c] [-v] [-r]",
+            "grep": (
+                "Search text inside files "
+                "<pattern> <file>  [-i] [-n] [-c] [-v] [-r]"
+            ),
             "checksum": "Generate checksum of a file <file>",
             "diff": "Compare two files <file1> <file2>",
             "head": "Show first N lines <file> [-n lines]",
@@ -34,13 +41,22 @@ class HelpCommand:
             "ping": "Send ICMP echo requests: ping <host>",
             "dns": "Resolve a hostname to an IP address: dns <hostname>",
             "ip": "Show IP information: ip [options] [hostname]",
-            "curl": "Makes a web request: curl <url> [-X <method>] [-H <header>] [-d <data>]",
+            "curl": (
+                "Makes a web request: "
+                "curl <url> [-X <method>] [-H <header>] [-d <data>]"
+            ),
             "traceroute": "Show the route to a host: traceroute <hostname> [-d]",
             "nslookup": "Resolve a hostname to an IP address: nslookup <hostname>",
         },
         "Server Monitoring Commands": {
-            "watch": "Watch a registered server via Grafana: watch <server-name> [-i seconds] [-n count]",
-            "watch-server": "Watch a registered server via Grafana: watch-server <server-name> [-i seconds] [-n count]",
+            "watch": (
+                "Watch a registered server via Grafana: "
+                "watch <server-name> [-i seconds] [-n count]"
+            ),
+            "watch-server": (
+                "Watch a registered server via Grafana: "
+                "watch-server <server-name> [-i seconds] [-n count]"
+            ),
             "add-server": "Register a server job: add-server <name> <job>",
             "remove-server": "Remove a server: remove-server <name>",
             "servers": "List all registered servers",
@@ -88,4 +104,3 @@ class HelpCommand:
             for cmd, desc in commands.items():
                 print(f"  {cmd:<16}  {desc}")
         print()
-

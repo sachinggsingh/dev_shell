@@ -3,7 +3,6 @@ import subprocess
 
 
 class DockerCommands:
-
     @staticmethod
     def _run(command):
 
@@ -12,14 +11,9 @@ class DockerCommands:
             return
 
         try:
+            subprocess.run(command, text=True, check=False)  # noqa: S603
 
-            result = subprocess.run(
-                command,
-                text=True
-            )
-
-        except Exception as e:
-
+        except OSError as e:
             print(f"Error: {e}")
 
     @staticmethod
@@ -83,33 +77,17 @@ docker system prune
         command = args[0]
 
         aliases = {
-
             "containers": ["ps", "-a"],
-
             "running": ["ps"],
-
             "images": ["images"],
-
             "volumes": ["volume", "ls"],
-
             "networks": ["network", "ls"],
-
             "stats": ["stats"],
-
-            "system": ["system", "df"]
-
+            "system": ["system", "df"],
         }
 
         if command in aliases:
-
-            self._run(
-                ["docker"] +
-                aliases[command] +
-                args[1:]
-            )
+            self._run(["docker", *aliases[command], *args[1:]])
 
         else:
-
-            self._run(
-                ["docker"] + args
-            )
+            self._run(["docker", *args])

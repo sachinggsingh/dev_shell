@@ -3,4 +3,4 @@
 from .base import Provider
 from .grafana import GrafanaProvider
 
-__all__ = ["Provider", "GrafanaProvider"]
+__all__ = ["GrafanaProvider", "Provider"]

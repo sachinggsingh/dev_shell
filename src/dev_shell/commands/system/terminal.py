@@ -6,4 +6,4 @@ import subprocess
 
 def clear(args):
     """Clear the terminal screen."""
-    subprocess.run("cls" if os.name == "nt" else "clear", check=True)
+    subprocess.run("cls" if os.name == "nt" else "clear", check=True, shell=False)  # noqa: S603

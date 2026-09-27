@@ -12,6 +12,21 @@ def _default_config_path() -> Path:
     return Path(files("dev_shell.config").joinpath("grafana.json"))
 
 
+class GrafanaConnectionError(Exception):
+    """Raised when unable to connect to Grafana."""
+
+
+class GrafanaHTTPError(Exception):
+    """Raised when Grafana returns an HTTP error response."""
+
+
+class GrafanaResponseError(Exception):
+    """Raised when Grafana returns an invalid or unexpected response."""
+
+
+class GrafanaQueryError(Exception):
+    """Raised when a Grafana query contains an error in the result."""
+
 class GrafanaClient:
     """Client used by dev_shell to query PromQL metrics through Grafana."""
 
@@ -32,7 +47,7 @@ class GrafanaClient:
             return
 
         try:
-            with open(config_path, "r", encoding="utf-8") as f:
+            with open(config_path, encoding="utf-8") as f:
                 config = json.load(f)
 
             self.host = config.get("host", "localhost")
@@ -52,16 +67,19 @@ class GrafanaClient:
             request.add_header("Authorization", f"Bearer {self.api_key}")
 
         try:
-            with urllib.request.urlopen(request, timeout=5) as response:
+            with urllib.request.urlopen(request, timeout=5) as response:  # noqa: S310
                 payload = json.loads(response.read().decode("utf-8"))
-            return payload.get("database") == "ok"
-        except Exception:
+        except (urllib.error.URLError, OSError):
             return False
+        else:
+            return payload.get("database") == "ok"
 
     def query(self, promql_query):
         """Execute a PromQL instant query through Grafana."""
         if not self.datasource_uid:
-            raise Exception("Grafana datasource UID is not configured")
+            raise GrafanaQueryError(  # noqa: TRY003
+                "Grafana datasource UID is not configured"
+            )
 
         payload = {
             "queries": [
@@ -80,7 +98,7 @@ class GrafanaClient:
             "to": "now",
         }
 
-        request = urllib.request.Request(
+        request = urllib.request.Request(  # noqa: S310
             self.base_url,
             data=json.dumps(payload).encode("utf-8"),
             headers={"Content-Type": "application/json"},
@@ -91,20 +109,26 @@ class GrafanaClient:
             request.add_header("Authorization", f"Bearer {self.api_key}")
 
         try:
-            with urllib.request.urlopen(request, timeout=5) as response:
+            with urllib.request.urlopen(request, timeout=5) as response:  # noqa: S310
                 data = json.loads(response.read().decode("utf-8"))
 
             return self._extract_value(data)
 
         except urllib.error.HTTPError as e:
             body = e.read().decode("utf-8", errors="replace")
-            raise Exception(f"Grafana request failed ({e.code}): {body}") from e
+            raise GrafanaHTTPError(  # noqa: TRY003
+                f"Grafana request failed ({e.code}): {body}"
+            ) from e
 
         except urllib.error.URLError as e:
-            raise Exception(f"Failed to connect to Grafana: {e}") from e
+            raise GrafanaConnectionError(  # noqa: TRY003
+                f"Failed to connect to Grafana: {e}"
+            ) from e
 
         except json.JSONDecodeError as e:
-            raise Exception(f"Invalid response from Grafana: {e}") from e
+            raise GrafanaResponseError(  # noqa: TRY003
+                f"Invalid response from Grafana: {e}"
+            ) from e
 
     @staticmethod
     def _extract_value(data):
@@ -113,7 +137,7 @@ class GrafanaClient:
         result = results.get("A", {})
 
         if result.get("error"):
-            raise Exception(result["error"])
+            raise GrafanaQueryError(result["error"])
 
         frames = result.get("frames", [])
         if not frames:

@@ -23,16 +23,16 @@ def traceroute(args):
 
     try:
         if platform.system().lower() == "windows":
-            command = ["tracert"] + flags + [target]
+            command = ["tracert", *flags, target]
         else:
             if "-d" in flags:
                 flags.remove("-d")
                 flags.append("-n")
-            command = ["traceroute"] + flags + [target]
+            command = ["traceroute", *flags, target]
 
         print(f"Tracing the path to {target}... Please wait.\n")
 
-        with subprocess.Popen(
+        with subprocess.Popen(  # noqa: S603
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
@@ -42,5 +42,5 @@ def traceroute(args):
                 print(line, end="", flush=True)
             process.wait()
 
-    except Exception as e:
+    except OSError as e:
         print(f"Error: {e}")

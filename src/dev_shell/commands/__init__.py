@@ -12,11 +12,11 @@ from .system import SystemCommands
 __all__ = [
     "DirectoryCommands",
     "FileCommands",
-    "SystemCommands",
-    "LogCommands",
     "HelpCommand",
+    "LogCommands",
+    "NetWorkcommands",
     "Permissions",
     "ServerCommands",
+    "SystemCommands",
     "WatchServerCommand",
-    "NetWorkcommands",
 ]

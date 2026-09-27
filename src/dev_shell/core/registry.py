@@ -4,15 +4,15 @@ from dev_shell.commands.directory import DirectoryCommands
 from dev_shell.commands.file import FileCommands
 from dev_shell.commands.logs import LogCommands
 from dev_shell.commands.meta import HelpCommand
+from dev_shell.commands.monitor import GrafanaCommands
 from dev_shell.commands.network import NetWorkcommands
 from dev_shell.commands.permissions import Permissions
+from dev_shell.commands.process import Processes
 from dev_shell.commands.server import ServerCommands, WatchServerCommand
 from dev_shell.commands.system import SystemCommands
+from dev_shell.integration.docker_commands import DockerCommands
 from dev_shell.integration.git_commands import GitCommands
 from dev_shell.integration.k8_commands import K8sCommands
-from dev_shell.integration.docker_commands import DockerCommands
-from dev_shell.commands.monitor import GrafanaCommands
-from dev_shell.commands.process import Processes
 
 
 def build_command_registry(shell) -> dict:

@@ -72,5 +72,5 @@ def packages(args):
             _packages_windows()
         else:
             print(f"  Unsupported OS: {platform.system()}")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[packages] Error: {exc}")

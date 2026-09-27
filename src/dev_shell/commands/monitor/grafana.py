@@ -1,6 +1,6 @@
 """Grafana monitoring commands."""
 
-from dev_shell.monitoring.grafana_client import GrafanaClient, _default_config_path
+from dev_shell.monitoring.grafana_client import _default_config_path
 from dev_shell.monitoring.provider.grafana import GrafanaProvider
 
 

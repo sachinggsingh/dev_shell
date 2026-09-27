@@ -48,7 +48,7 @@ def head(args):
         return
 
     try:
-        with open(filename, "r", encoding="utf-8") as file:
+        with open(filename, encoding="utf-8") as file:
             for i, line in enumerate(file):
                 if i >= lines_count:
                     break
@@ -84,7 +84,7 @@ def tail(args):
         return
 
     try:
-        with open(filename, "r", encoding="utf-8") as file:
+        with open(filename, encoding="utf-8") as file:
             last_lines = deque(file, maxlen=lines_count)
 
         for line in last_lines:

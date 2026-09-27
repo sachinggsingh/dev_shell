@@ -26,5 +26,5 @@ def env(args):
             for key, value in sorted(os.environ.items()):
                 print(f"  {key}={value}")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[env] Error: {exc}")

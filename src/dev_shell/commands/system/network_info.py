@@ -40,5 +40,5 @@ def network(args):
                 if addr.netmask:
                     print(f"    {'Netmask':<12} {addr.netmask}")
 
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[network] Error: {exc}")
