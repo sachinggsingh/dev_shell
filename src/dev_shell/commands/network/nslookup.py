@@ -29,5 +29,5 @@ def nslookup(args):
             print("=" * 40)
     except socket.gaierror:
         print(f"Unable to resolve '{hostname}'")
-    except Exception as e:
+    except OSError as e:
         print(f"Error: {e}")

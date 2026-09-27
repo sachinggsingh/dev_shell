@@ -22,7 +22,6 @@ def ps(args):
     i = 0
 
     while i < len(args):
-
         arg = args[i]
 
         if arg == "-cpu":
@@ -32,7 +31,6 @@ def ps(args):
             sort_by = "memory"
 
         elif arg == "-n":
-
             i += 1
 
             if i >= len(args):
@@ -46,7 +44,6 @@ def ps(args):
                 return
 
         elif arg == "-pid":
-
             i += 1
 
             if i >= len(args):
@@ -67,12 +64,8 @@ def ps(args):
 
     processes = []
 
-    for process in psutil.process_iter(
-        ["pid", "name", "status"]
-    ):
-
+    for process in psutil.process_iter(["pid", "name", "status"]):
         try:
-
             info = process.info
 
             processes.append(
@@ -93,43 +86,28 @@ def ps(args):
             continue
 
     if pid is not None:
-
-        processes = [
-            p
-            for p in processes
-            if p["pid"] == pid
-        ]
+        processes = [p for p in processes if p["pid"] == pid]
 
     if sort_by == "cpu":
-
         processes.sort(
             key=lambda x: x["cpu"],
             reverse=True,
         )
 
     elif sort_by == "memory":
-
         processes.sort(
             key=lambda x: x["memory"],
             reverse=True,
         )
 
     if limit is not None:
-
         processes = processes[:limit]
 
-    print(
-        f"{'PID':<8}"
-        f"{'NAME':<30}"
-        f"{'CPU %':<10}"
-        f"{'MEM %':<10}"
-        f"{'STATUS':<15}"
-    )
+    print(f"{'PID':<8}{'NAME':<30}{'CPU %':<10}{'MEM %':<10}{'STATUS':<15}")
 
     print("-" * 75)
 
     for process in processes:
-
         print(
             f"{process['pid']:<8}"
             f"{process['name']:<30}"

@@ -30,14 +30,15 @@ def row(label: str, value: str, indent: int = 2) -> None:
 def run(cmd: list, timeout: int = 10) -> str:
     """Run a subprocess command and return stdout."""
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: S603
             cmd,
             capture_output=True,
             text=True,
             timeout=timeout,
+            check=False,
         )
         return result.stdout.strip()
-    except Exception:
+    except OSError:
         return ""
 
 

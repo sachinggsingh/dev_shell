@@ -6,7 +6,9 @@ from ._helpers import current_os, run, section
 
 
 def _services_linux():
-    output = run(["systemctl", "list-units", "--type=service", "--state=running", "--no-pager"])
+    output = run(
+        ["systemctl", "list-units", "--type=service", "--state=running", "--no-pager"]
+    )
     if output:
         for line in output.splitlines():
             print(f"  {line}")
@@ -54,5 +56,5 @@ def services(args):
             _services_windows()
         else:
             print(f"  Unsupported OS: {platform.system()}")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[services] Error: {exc}")

@@ -2,7 +2,7 @@
 
 import hashlib
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 
 from dev_shell.utils import Formatter
 
@@ -24,7 +24,7 @@ def file_size(args):
     try:
         size = os.path.getsize(path)
         print(f"{path}: {Formatter.format_file_size(size)}")
-    except Exception as e:
+    except OSError as e:
         print(Formatter.highlight_error(f"Error reading size: {e}"))
 
 
@@ -48,13 +48,16 @@ def stat(args):
 
         print(f"File: {filename}")
         print(f"Size: {stat_info.st_size} bytes")
-        print(f"Last modified: {datetime.fromtimestamp(stat_info.st_mtime)}")
-        print(f"Last accessed: {datetime.fromtimestamp(stat_info.st_atime)}")
-        print(f"Created: {datetime.fromtimestamp(stat_info.st_ctime)}")
+        mtime = datetime.fromtimestamp(stat_info.st_mtime, tz=timezone.utc)
+        atime = datetime.fromtimestamp(stat_info.st_atime, tz=timezone.utc)
+        ctime = datetime.fromtimestamp(stat_info.st_ctime, tz=timezone.utc)
+        print(f"Last modified: {mtime}")
+        print(f"Last accessed: {atime}")
+        print(f"Created: {ctime}")
         print(f"Permissions: {stat_info.st_mode}")
         print(f"Owner: {stat_info.st_uid}")
         print(f"Group: {stat_info.st_gid}")
-    except Exception as e:
+    except OSError as e:
         print(f"Error: {e}")
 
 
@@ -76,7 +79,7 @@ def checksum(args):
     try:
         with open(filename, "rb") as file:
             print(hashlib.sha256(file.read()).hexdigest())
-    except Exception as e:
+    except OSError as e:
         print(f"Error: {e}")
 
 
@@ -100,11 +103,12 @@ def diff(args):
         return
 
     try:
-        with open(file1, "r", encoding="utf-8") as f1, open(
-            file2, "r", encoding="utf-8"
-        ) as f2:
-            for i, (line1, line2) in enumerate(zip(f1, f2)):
+        with (
+            open(file1, encoding="utf-8") as f1,
+            open(file2, encoding="utf-8") as f2,
+        ):
+            for i, (line1, line2) in enumerate(zip(f1, f2, strict=False)):
                 if line1 != line2:
                     print(f"{i + 1}: {line1.rstrip()} != {line2.rstrip()}")
-    except Exception as e:
+    except OSError as e:
         print(f"Error: {e}")

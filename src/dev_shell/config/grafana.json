@@ -1,0 +1,6 @@
+{
+    "host": "localhost",
+    "port": 3000,
+    "api_key": "YOUR_GRAFANA_API_KEY",
+    "datasource_uid": "YOUR_PROMETHEUS_DATASOURCE_UID"
+}

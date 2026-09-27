@@ -4,8 +4,8 @@ import os
 import shlex
 from pathlib import Path
 
-from dev_shell.core.registry import build_command_registry
 from dev_shell.commands.network import NetWorkcommands
+from dev_shell.core.registry import build_command_registry
 from dev_shell.utils import Formatter, Logger, Validator
 
 try:
@@ -24,9 +24,7 @@ class Shell:
         log_dir.mkdir(parents=True, exist_ok=True)
         self.logger = Logger(log_file=str(log_dir / "shell.log"))
         self.validator = Validator()
-        self.server_registry = {
-            "local": {"job": "devshell-local"}
-        }
+        self.server_registry = {"local": {"job": "devshell-local"}}
         self.network_commands = network_commands or NetWorkcommands()
         self.commands = build_command_registry(self)
         self.history_file = os.path.expanduser("~/.dev_shell_history")
@@ -43,7 +41,7 @@ class Shell:
         try:
             if os.path.exists(self.history_file):
                 readline.read_history_file(self.history_file)
-        except Exception:
+        except OSError:
             pass
 
     def _complete_command(self, text, state):
@@ -60,7 +58,7 @@ class Shell:
 
         try:
             readline.write_history_file(self.history_file)
-        except Exception:
+        except OSError:
             pass
 
     def _handle_exit(self, args):
@@ -114,22 +112,22 @@ class Shell:
                 except FileNotFoundError:
                     message = "File or directory not found."
                     print(Formatter.highlight_error(message))
-                    self.logger.error(message)
+                    self.logger.exception(message)
 
                 except PermissionError:
                     message = "Permission denied."
                     print(Formatter.highlight_error(message))
-                    self.logger.error(message)
+                    self.logger.exception(message)
 
                 except OSError as e:
                     message = f"OS Error: {e}"
                     print(Formatter.highlight_error(message))
-                    self.logger.error(message)
+                    self.logger.exception(message)
 
                 except Exception as e:
                     message = f"Unexpected error: {e}"
                     print(Formatter.highlight_error(message))
-                    self.logger.error(message)
+                    self.logger.exception(message)
 
         except KeyboardInterrupt:
             message = "Ctrl+C — shutting down gracefully..."

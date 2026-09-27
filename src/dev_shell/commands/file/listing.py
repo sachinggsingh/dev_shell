@@ -40,8 +40,7 @@ def ls(args):
 
         if directories_only:
             entries = [
-                entry for entry in entries
-                if os.path.isdir(os.path.join(path, entry))
+                entry for entry in entries if os.path.isdir(os.path.join(path, entry))
             ]
 
         if long_format:
@@ -57,7 +56,9 @@ def ls(args):
                 )
 
                 size = os.path.getsize(entry_path) if os.path.isfile(entry_path) else 0
-                size_str = Formatter.format_file_size(size) if human_readable else str(size)
+                size_str = (
+                    Formatter.format_file_size(size) if human_readable else str(size)
+                )
 
                 print(f"[{perms}] {size_str:>10}  {entry}")
         else:
@@ -65,5 +66,5 @@ def ls(args):
                 print(entry)
     except NotADirectoryError:
         print(Formatter.highlight_error(f"ls: not a directory: {path}"))
-    except Exception as e:
+    except OSError as e:
         print(Formatter.highlight_error(f"Error listing directory: {e}"))

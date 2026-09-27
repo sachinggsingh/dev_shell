@@ -4,7 +4,15 @@ from ._helpers import current_os, run, section
 
 
 def _gpu_windows():
-    output = run(["wmic", "path", "win32_VideoController", "get", "Name,AdapterRAM,DriverVersion"])
+    output = run(
+        [
+            "wmic",
+            "path",
+            "win32_VideoController",
+            "get",
+            "Name,AdapterRAM,DriverVersion",
+        ]
+    )
     if output:
         print(output)
     else:
@@ -17,7 +25,8 @@ def _gpu_linux():
     lspci = run(["lspci"])
     if lspci:
         gpu_lines = [
-            line for line in lspci.splitlines()
+            line
+            for line in lspci.splitlines()
             if "VGA" in line or "3D" in line or "Display" in line
         ]
         if gpu_lines:
@@ -26,11 +35,13 @@ def _gpu_linux():
                 print(f"    {line}")
             found = True
 
-    nvidia = run([
-        "nvidia-smi",
-        "--query-gpu=name,driver_version,memory.total,memory.free,utilization.gpu",
-        "--format=csv,noheader,nounits",
-    ])
+    nvidia = run(
+        [
+            "nvidia-smi",
+            "--query-gpu=name,driver_version,memory.total,memory.free,utilization.gpu",
+            "--format=csv,noheader,nounits",
+        ]
+    )
     if nvidia:
         print()
         print("  NVIDIA GPU Details (nvidia-smi):")
@@ -83,5 +94,5 @@ def gpu(args):
             _gpu_macos()
         else:
             _gpu_linux()
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         print(f"[gpu] Error: {exc}")

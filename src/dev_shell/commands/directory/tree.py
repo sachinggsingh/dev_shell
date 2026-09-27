@@ -26,10 +26,11 @@ def tree(args):
             entries = sorted(os.listdir(base))
             if directories_only:
                 entries = [
-                    entry for entry in entries
+                    entry
+                    for entry in entries
                     if os.path.isdir(os.path.join(base, entry))
                 ]
-        except Exception as e:
+        except OSError as e:
             print(prefix + f"[error opening dir] {e}")
             return
 
